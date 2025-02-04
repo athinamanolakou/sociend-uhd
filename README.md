@@ -23,12 +23,10 @@ Your team must choose a build tool to use with typescript.   ESBuild is one of t
 
   Pushes to the main branch are disabled.  Developers should make a branch for the issue they are working on and merge the branch when the issue is complete.  Merged branches may be deleted.  A code review is required in order to merge a branch.
 
-  The code review can be minimal for the first sprint.  During the second sprint you will focus more on code reviews.
-
 
 ## Testing
 
-Unit testing is required for sprints two and three.  As you add features, you must also add tests.
+Unit testing is required.
 
 
 
