@@ -1,3 +1,8 @@
+## RENAME THIS FILE
+# it must be called .gitlab-ci.yml
+#
+#
+
 stages:
   - build
   - lint
@@ -36,3 +41,4 @@ lint-frontend:
   rules:
     - when: always
   allow_failure: false
+
