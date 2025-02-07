@@ -1,10 +1,9 @@
 import React, {useState} from 'react';
-import ProductPitch from './components/ProductPitch';
 
 const App: React.FC = () => {
   return (
     <div className="App">
-      <ProductPitch />
+      <h1>Urban Housing Demand</h1>
     </div>
   );
 };
