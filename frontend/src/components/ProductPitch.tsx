@@ -22,93 +22,41 @@ const ProductPitch: React.FC = () => {
                 Urban Housing Demand in Hamilton vs. Toronto
             </h1>
 
-            <h2 style={{
-                fontSize: '1.8rem',
-                borderBottom: '2px solid #FFD700',
-                paddingBottom: '5px',
-                marginBottom: '15px',
-            }}>Project Overview</h2>
-            <p style={{lineHeight: '1.8', fontSize: '1.1rem', marginBottom: '20px'}}>
+            <p style={{lineHeight: '1.8', fontSize: '1.2rem', marginBottom: '20px', textAlign: 'center'}}>
                 This project aims to analyze the differences in housing requirements for various demographic groups
                 (singles, families, single-income households, unemployed individuals) and compare them with actual housing
-                developments in Hamilton and Toronto. The findings will guide real estate investors by providing insights into
-                how well housing developments meet the evolving needs of these groups.
+                developments in Hamilton and Toronto. Our goal is to guide real estate investors and developers in making
+                data-driven decisions by identifying gaps between housing demand and supply.
             </p>
 
-            <h2 style={{
-                fontSize: '1.8rem',
-                borderBottom: '2px solid #FFD700',
-                paddingBottom: '5px',
-                marginBottom: '15px',
-            }}>Epics</h2>
-
-            <div style={{marginBottom: '25px'}}>
-                <h3 style={{fontSize: '1.5rem', color: '#FFD700', marginBottom: '10px'}}>1. Data Integration and Analysis Framework</h3>
-                <p style={{lineHeight: '1.8', fontSize: '1.1rem', marginBottom: '15px'}}>
-                    <strong>Goal:</strong> Develop a robust framework for integrating and analyzing housing and employment data
-                    specific to Hamilton and Toronto.
-                </p>
-                <p style={{lineHeight: '1.8', fontSize: '1.1rem'}}>
-                    This involves establishing data pipelines from multiple sources, ensuring data quality, and setting up a
-                    foundational analysis environment for further studies.
-                </p>
-            </div>
-
-            <div style={{marginBottom: '25px'}}>
-                <h3 style={{fontSize: '1.5rem', color: '#FFD700', marginBottom: '10px'}}>2. Demographic and Housing Needs Analysis</h3>
-                <p style={{lineHeight: '1.8', fontSize: '1.1rem', marginBottom: '15px'}}>
-                    <strong>Goal:</strong> Analyze housing demands versus supply for different demographic groups in Hamilton and Toronto.
-                </p>
-                <p style={{lineHeight: '1.8', fontSize: '1.1rem'}}>
-                    This focuses on identifying and comparing the housing needs of various demographic groups (singles, families,
-                    single-income households, unemployed) against actual housing starts and completions.
-                    The analysis will help pinpoint discrepancies and opportunities to aid targeted real estate development and investment strategies.
-                </p>
-            </div>
-
-            <div style={{marginBottom: '25px'}}>
-                <h3 style={{fontSize: '1.5rem', color: '#FFD700', marginBottom: '10px'}}>3. Visualization and Decision Support Tool Development</h3>
-                <p style={{lineHeight: '1.8', fontSize: '1.1rem', marginBottom: '15px'}}>
-                    <strong>Goal:</strong> Create intuitive visual tools to represent housing data analysis and aid stakeholders in making informed decisions.
-                </p>
-                <p style={{lineHeight: '1.8', fontSize: '1.1rem'}}>
-                    This will include interactive data visualizations like grouped stacked bar charts and sunburst charts,
-                    making it easier for investors and policymakers to assess trends and align their strategies accordingly.
-                </p>
-            </div>
-
-            <h2 style={{
-                fontSize: '1.8rem',
-                borderBottom: '2px solid #FFD700',
-                paddingBottom: '5px',
-                marginBottom: '15px',
-            }}>Target Persona: David Martinez</h2>
-
-            <div style={{marginBottom: '15px', paddingLeft: '20px'}}>
-                <h3 style={{fontSize: '1.3rem', marginBottom: '10px'}}>Background:</h3>
+            <div style={{marginBottom: '30px', padding: '20px', backgroundColor: '#2c2c2c', borderRadius: '8px'}}>
+                <h2 style={{
+                    fontSize: '1.8rem',
+                    color: '#FFD700',
+                    marginBottom: '15px',
+                }}>Key Objectives</h2>
                 <ul style={{lineHeight: '1.8', fontSize: '1.1rem', marginLeft: '20px'}}>
-                    <li><strong>Age:</strong> 35</li>
-                    <li><strong>Occupation:</strong> Real Estate Investment Analyst</li>
-                    <li><strong>Location:</strong> Toronto, Ontario</li>
-                    <li><strong>Education:</strong> Master’s Degree in Urban Planning and Development</li>
+                    <li>Integrate and analyze housing and employment data specific to Hamilton and Toronto.</li>
+                    <li>Identify gaps between housing demand and supply for various demographic groups.</li>
+                    <li>Develop intuitive visual tools to assist stakeholders in making informed decisions.</li>
                 </ul>
             </div>
 
-            <div style={{marginBottom: '15px', paddingLeft: '20px'}}>
-                <h3 style={{fontSize: '1.3rem', marginBottom: '10px'}}>Demographics:</h3>
-                <ul style={{lineHeight: '1.8', fontSize: '1.1rem', marginLeft: '20px'}}>
-                    <li><strong>Family Status:</strong> Married, planning to start a family</li>
-                    <li><strong>Income:</strong> Upper middle class</li>
-                </ul>
-            </div>
-
-            <div style={{marginBottom: '15px', paddingLeft: '20px'}}>
-                <h3 style={{fontSize: '1.3rem', marginBottom: '10px'}}>Behavioral Traits:</h3>
-                <ul style={{lineHeight: '1.8', fontSize: '1.1rem', marginLeft: '20px'}}>
-                    <li><strong>Tech-savvy:</strong> Comfortable using advanced data analysis tools and platforms.</li>
-                    <li><strong>Detail-oriented:</strong> Focuses on precision and accuracy in data and reports.</li>
-                    <li><strong>Proactive:</strong> Always looking for new investment opportunities and ways to optimize portfolio performance.</li>
-                </ul>
+            <div style={{padding: '20px', backgroundColor: '#2c2c2c', borderRadius: '8px'}}>
+                <h2 style={{
+                    fontSize: '1.8rem',
+                    color: '#FFD700',
+                    marginBottom: '15px',
+                }}>Our Approach</h2>
+                <p style={{lineHeight: '1.8', fontSize: '1.1rem', marginBottom: '15px'}}>
+                    By analyzing housing data, employment statistics, and demographic trends, we aim to provide actionable insights
+                    for real estate investors, developers, and policymakers. Our visual tools, including interactive charts and
+                    graphs, make it easy to understand complex data and identify opportunities in the housing market.
+                </p>
+                <p style={{lineHeight: '1.8', fontSize: '1.1rem'}}>
+                    With a focus on Hamilton and Toronto, we target diverse demographic groups, ensuring housing developments
+                    meet the needs of singles, families, and underrepresented populations.
+                </p>
             </div>
         </section>
     );
