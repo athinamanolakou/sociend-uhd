@@ -1,0 +1,33 @@
+  console.log
+    API_URL: /api/notes
+
+      at Object.log (src/services/noteService.ts:5:9)
+
+  (node:23905) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+  (Use `node --trace-deprecation ...` to show where the warning was created)
+  PASS  src/services/noteService.test.ts
+    noteService
+      getAllNotes
+        ✓ should fetch all notes successfully (4 ms)
+        ✓ should return an empty array if fetch fails (3 ms)
+      getNote
+        ✓ should fetch a single note by ID (2 ms)
+        ✓ should throw an error if fetch fails (28 ms)
+      addNote
+        ✓ should add a new note successfully (2 ms)
+        ✓ should throw an error if adding a note fails (3 ms)
+      updateNote
+        ✓ should update a note successfully and return JSON (11 ms)
+        ✓ should throw an error if updating a note fails (2 ms)
+      getTotalNotesCount
+        ✓ should fetch total notes count successfully (7 ms)
+        ✓ should throw an error if fetching total count fails (2 ms)
+      getCompletedNotesCount
+        ✓ should fetch completed (DONE) notes count successfully (2 ms)
+        ✓ should throw an error if fetching completed count fails (1 ms)
+
+Test Suites: 1 passed, 1 total
+Tests:       12 passed, 12 total
+Snapshots:   0 total
+Time:        1.14 s
+Ran all test suites.
