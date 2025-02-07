@@ -2,10 +2,9 @@
 
 
 
-## Yet Another ToDo List (YATDL)
+## Urban Housing Demand
 
-Your team will work on this TODO list project for the first three sprints to gain some experience with the SCRUM development process, with gitlab, and with deployment.
-
+Your team will work on this urban housing demand project
 
 ## Developing with Docker
 

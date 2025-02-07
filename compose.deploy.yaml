@@ -18,7 +18,7 @@ services:
       - TZ=Etc/UTC
       - URL=sociend.socs.uoguelph.ca
       - VALIDATION=http
-      - STAGING=true #optional
+      - STAGING=false #optional
     volumes:
       - ./swag/config:/config
     ports:
