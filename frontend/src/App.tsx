@@ -1,0 +1,12 @@
+import React, {useState} from 'react';
+import ProductPitch from './components/ProductPitch';
+
+const App: React.FC = () => {
+  return (
+    <div className="App">
+      <ProductPitch />
+    </div>
+  );
+};
+
+export default App;
