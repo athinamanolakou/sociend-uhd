@@ -1,0 +1,43 @@
+plugins {
+    id 'org.springframework.boot' version '3.1.0' // Spring Boot plugin
+    id 'io.spring.dependency-management' version '1.1.0' // Dependency management
+    id 'java' // Java plugin
+    id 'checkstyle' // Checkstyle plugin
+}
+
+group = 'com.example.cis4900.spring'
+version = '1.0'
+archivesBaseName = "notes-app"
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    // Spring Boot Starter Dependencies
+    implementation 'org.springframework.boot:spring-boot-starter'
+    implementation 'org.springframework.boot:spring-boot-starter-web'
+    implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+
+    // Database Driver
+    runtimeOnly 'com.h2database:h2' // Replace with your preferred database
+}
+
+// Checkstyle configuration
+checkstyle {
+    toolVersion = '10.12.1' // Specify the Checkstyle version
+    configFile = file('config/checkstyle/checkstyle.xml') // Ensure this file exists in your project
+}
+
+tasks.withType(org.gradle.api.plugins.quality.Checkstyle) { // Ensure the correct class type
+    reports {
+        xml.required.set(false) // Disable XML reports
+        html.required.set(true) // Enable HTML reports
+    }
+}
+
+// Make sure Checkstyle runs with the check task
+tasks.named('check') {
+    dependsOn 'checkstyleMain'
+    dependsOn 'checkstyleTest'
+}
