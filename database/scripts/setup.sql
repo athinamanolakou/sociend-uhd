@@ -1,8 +1,0 @@
-USE template_db;
-
-CREATE TABLE IF NOT EXISTS note (
-    id INT AUTO_INCREMENT COMMENT 'Primary Key' PRIMARY KEY,
-    text VARCHAR(255) NULL,
-    status ENUM('DONE', 'NOT STARTED', 'IN PROGRESS') NOT NULL DEFAULT 'NOT STARTED',
-    due_date DATE
-);
