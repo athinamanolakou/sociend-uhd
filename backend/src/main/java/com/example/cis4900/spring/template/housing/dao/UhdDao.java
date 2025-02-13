@@ -1,4 +1,4 @@
-package com.example.cis4900.spring.template.notes.dao;
+package com.example.cis4900.spring.template.housing.dao;
 
 import com.fasterxml.jackson.annotation.JsonTypeInfo.None;
 
