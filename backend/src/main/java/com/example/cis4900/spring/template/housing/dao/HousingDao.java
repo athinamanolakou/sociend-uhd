@@ -9,7 +9,6 @@ import org.springframework.data.repository.query.Param;
 import java.time.LocalDate;
 import java.util.List;
 
-public interface UhdDao extends CrudRepository<Integer, Integer> { // Change first "Integer" to the service we use
+public interface HousingDao extends CrudRepository<Integer, Integer> { // Change first "Integer" to the service we use
 
-   
 }
