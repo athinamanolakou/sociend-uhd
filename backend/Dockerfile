@@ -20,5 +20,5 @@ RUN chmod +x ./gradlew
 RUN ./gradlew build
 
 ## need to add a command to run the app here
-CMD ["bash", "-c", "java -jar build/libs/notes-app-1.0.jar & tail -f /dev/null"]
+CMD ["bash", "-c", "java -jar build/libs/uhd-app-1.0.jar & tail -f /dev/null"]
 # this command is useful for debugging because it lets you kill and restart the java process without killing the container

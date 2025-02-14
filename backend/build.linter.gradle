@@ -7,7 +7,7 @@ plugins {
 
 group = 'com.example.cis4900.spring'
 version = '1.0'
-archivesBaseName = "notes-app"
+archivesBaseName = "uhd-app"
 
 repositories {
     mavenCentral()
