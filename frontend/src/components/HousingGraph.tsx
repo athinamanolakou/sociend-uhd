@@ -1,6 +1,8 @@
 import React, {useEffect, useState} from 'react';
 import {Line} from 'react-chartjs-2';
-import {Chart as ChartJS, CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend} from 'chart.js';
+import {
+    Chart as ChartJS, CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend
+} from 'chart.js';
 import {getHousingDataByType} from '../services/housingService';
 
 ChartJS.register(
@@ -22,18 +24,33 @@ const HousingGraph: React.FC = () => {
             .then(data => {
                 console.log('Fetched Housing Data:', data);
 
-                const years = [...new Set(data.map((entry: any) => entry.year))].sort();
-                const hamiltonCompletionRate = years.map(year => {
-                    const entry = data.find((item: any) => item.city === 'Hamilton' && item.year === year);
-                    return entry ? (entry.completions / entry.starts) * 100 : 0;
+                // Generate a unique sorted list of time labels (YYYY-MM format)
+                const timeLabels = [...new Set(
+                    data.map((entry: any) => `${entry.year}-${String(entry.month).padStart(2, '0')}`)
+                )].sort();
+
+                // Get Hamilton's completion rate per month
+                const hamiltonCompletionRate = timeLabels.map(date => {
+                    const entry = data.find((item: any) =>
+                        item.city === 'Hamilton' && `${item.year}-${String(item.month).padStart(2, '0')}` === date
+                    );
+                    return entry && entry.singlesStarts > 0
+                        ? (entry.singlesComplete / entry.singlesStarts) * 100
+                        : 0;
                 });
-                const torontoCompletionRate = years.map(year => {
-                    const entry = data.find((item: any) => item.city === 'Toronto' && item.year === year);
-                    return entry ? (entry.completions / entry.starts) * 100 : 0;
+
+                // Get Toronto's completion rate per month
+                const torontoCompletionRate = timeLabels.map(date => {
+                    const entry = data.find((item: any) =>
+                        item.city === 'Toronto' && `${item.year}-${String(item.month).padStart(2, '0')}` === date
+                    );
+                    return entry && entry.singlesStarts > 0
+                        ? (entry.singlesComplete / entry.singlesStarts) * 100
+                        : 0;
                 });
 
                 setChartData({
-                    labels: years,
+                    labels: timeLabels,
                     datasets: [
                         {
                             label: 'Hamilton Completion Rate (%)',
@@ -71,7 +88,7 @@ const HousingGraph: React.FC = () => {
                 marginBottom: '20px',
                 color: '#FFD700',
             }}>
-                Housing Completion Rate (Hamilton vs Toronto)
+                Housing Completion Rate (Hamilton vs Toronto) - Monthly
             </h1>
 
             <div style={{backgroundColor: '#2c2c2c', padding: '20px', borderRadius: '8px'}}>

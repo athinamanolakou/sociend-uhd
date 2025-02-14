@@ -2,13 +2,21 @@
 
 export interface HousingData {
     id: number;
-    city: 'Hamilton' | 'Toronto';
-    housingType: 'Single Family' | 'Apartments' | 'Condos' | 'Townhouses' | 'Other';
-    starts: number; // Number of housing starts
-    completions: number; // Number of completed housing units
     year: number;
-    month?: string; // Optional: If we want to include monthly trends
+    month: number;
+    city: string;
+    singlesStarts: number;
+    semisStarts: number;
+    rowStarts: number;
+    aptOtherStarts: number;
+    totalStarts: number;
+    singlesComplete: number;
+    semisComplete: number;
+    rowComplete: number;
+    aptOtherComplete: number;
+    totalComplete: number;
 }
+
 
 export interface HousingTrend {
     year: number;
