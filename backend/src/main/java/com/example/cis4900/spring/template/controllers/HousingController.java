@@ -31,7 +31,10 @@ public class HousingController {
 
     @GetMapping("/type/{housingType}")
     private @ResponseBody List<HousingData> getHousingDataByType(@PathVariable String housingType) {
-        return housingService.getHousingDataByType(housingType);
+        System.out.println("Received API request: /api/housing/type/" + housingType);
+        List<HousingData> result = housingService.getHousingDataByType(housingType);
+        System.out.println("Returning data: " + result);
+        return result;
     }
 
     @GetMapping("/city/{city}/type/{housingType}")

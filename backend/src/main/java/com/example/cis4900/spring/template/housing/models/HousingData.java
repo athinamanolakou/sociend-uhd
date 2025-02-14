@@ -1,27 +1,25 @@
 package com.example.cis4900.spring.template.housing.models;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.Column;
+import jakarta.persistence.*;
 
 @Entity
+@Table(name = "housing_data")
 public class HousingData {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
     private String city;
     private String housingType;
-    private int starts;
-    private int completions;
-    private int year;
+    private Integer starts;
+    private Integer completions;
+    private Integer year;
 
     public HousingData() {
     }
 
-    public HousingData(Integer id, String city, String housingType, int starts, int completions, int year) {
+    public HousingData(Integer id, String city, String housingType, Integer starts, Integer completions, Integer year) {
         this.id = id;
         this.city = city;
         this.housingType = housingType;
@@ -30,7 +28,7 @@ public class HousingData {
         this.year = year;
     }
 
-    // --- Getters/Setters ---
+    // Getters and setters
     public Integer getId() {
         return id;
     }
@@ -55,27 +53,27 @@ public class HousingData {
         this.housingType = housingType;
     }
 
-    public int getStarts() {
+    public Integer getStarts() {
         return starts;
     }
 
-    public void setStarts(int starts) {
+    public void setStarts(Integer starts) {
         this.starts = starts;
     }
 
-    public int getCompletions() {
+    public Integer getCompletions() {
         return completions;
     }
 
-    public void setCompletions(int completions) {
+    public void setCompletions(Integer completions) {
         this.completions = completions;
     }
 
-    public int getYear() {
+    public Integer getYear() {
         return year;
     }
 
-    public void setYear(int year) {
+    public void setYear(Integer year) {
         this.year = year;
     }
 }
