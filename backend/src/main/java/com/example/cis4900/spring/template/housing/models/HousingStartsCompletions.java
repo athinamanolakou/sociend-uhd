@@ -1,13 +1,12 @@
 package com.example.cis4900.spring.template.housing.models;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
+import java.sql.Timestamp;
 import java.time.Year;
 
 @Entity
-public class HousingData {
+@Table(name = "housing_starts_completions")
+public class HousingStartsCompletions {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
@@ -29,13 +28,14 @@ public class HousingData {
     private int rowComplete;
     private int aptOtherComplete;
     private int totalComplete;
+    private Timestamp lastUpdated;
 
     // Default constructor required by JPA
-    public HousingData() {
+    public HousingStartsCompletions() {
     }
 
-    // Private constructor for builder pattern
-    private HousingData(Builder builder) {
+    // Private constructor for the builder pattern
+    private HousingStartsCompletions(Builder builder) {
         this.id = builder.id;
         this.year = builder.year;
         this.month = builder.month;
@@ -50,9 +50,10 @@ public class HousingData {
         this.rowComplete = builder.rowComplete;
         this.aptOtherComplete = builder.aptOtherComplete;
         this.totalComplete = builder.totalComplete;
+        this.lastUpdated = builder.lastUpdated;
     }
 
-    // Builder pattern to avoid too many constructor parameters
+    // Builder Pattern to avoid too many parameters in the constructor
     public static class Builder {
         private Integer id;
         private Year year;
@@ -68,6 +69,7 @@ public class HousingData {
         private int rowComplete;
         private int aptOtherComplete;
         private int totalComplete;
+        private Timestamp lastUpdated;
 
         public Builder id(Integer id) {
             this.id = id;
@@ -139,12 +141,17 @@ public class HousingData {
             return this;
         }
 
-        public HousingData build() {
-            return new HousingData(this);
+        public Builder lastUpdated(Timestamp lastUpdated) {
+            this.lastUpdated = lastUpdated;
+            return this;
+        }
+
+        public HousingStartsCompletions build() {
+            return new HousingStartsCompletions(this);
         }
     }
 
-    // Getters and setters
+    // Getters (No Setters to Keep It Immutable)
     public Integer getId() {
         return id;
     }
@@ -199,5 +206,9 @@ public class HousingData {
 
     public int getTotalComplete() {
         return totalComplete;
+    }
+
+    public Timestamp getLastUpdated() {
+        return lastUpdated;
     }
 }

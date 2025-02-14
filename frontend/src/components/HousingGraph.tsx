@@ -1,10 +1,10 @@
 import React, {useEffect, useState} from 'react';
 import {Line} from 'react-chartjs-2';
-import {
-    Chart as ChartJS, CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend
-} from 'chart.js';
-import {getHousingDataByType} from '../services/housingService';
+import {Chart as ChartJS, CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend} from 'chart.js';
+import {getAllHousingStartsCompletions} from '../services/housingService';
+import {HousingStartsCompletions} from '../types/Housing';
 
+// 🔹 Fix: Register CategoryScale for x-axis (labels like "YYYY-MM")
 ChartJS.register(
     CategoryScale,
     LinearScale,
@@ -19,55 +19,59 @@ const HousingGraph: React.FC = () => {
     const [chartData, setChartData] = useState<any>(null);
 
     useEffect(() => {
-        console.log("Attempting to fetch data from API...");
-        getHousingDataByType("Single Family")
-            .then(data => {
-                console.log('Fetched Housing Data:', data);
+        console.log("Fetching starts and completions data for graph...");
 
-                // Generate a unique sorted list of time labels (YYYY-MM format)
-                const timeLabels = [...new Set(
-                    data.map((entry: any) => `${entry.year}-${String(entry.month).padStart(2, '0')}`)
-                )].sort();
+        getAllHousingStartsCompletions().then(data => {
+            if (!data || data.length === 0) {
+                console.warn("No data received from API.");
+                return;
+            }
 
-                // Get Hamilton's completion rate per month
-                const hamiltonCompletionRate = timeLabels.map(date => {
-                    const entry = data.find((item: any) =>
-                        item.city === 'Hamilton' && `${item.year}-${String(item.month).padStart(2, '0')}` === date
+            console.log("Received data:", data);
+
+            // Convert year and month into a time label (YYYY-MM format)
+            const timeLabels = [...new Set(
+                data.map((entry: HousingStartsCompletions) =>
+                    `${entry.year}-${String(entry.month).padStart(2, '0')}`
+                )
+            )].sort();
+
+            const calculateCompletionRate = (city: string) => {
+                return timeLabels.map(date => {
+                    const entry = data.find((item: HousingStartsCompletions) =>
+                        item.city === city &&
+                        `${item.year}-${String(item.month).padStart(2, '0')}` === date
                     );
-                    return entry && entry.singlesStarts > 0
-                        ? (entry.singlesComplete / entry.singlesStarts) * 100
+
+                    return entry && entry.totalStarts > 0
+                        ? (entry.totalComplete / entry.totalStarts) * 100
                         : 0;
                 });
+            };
 
-                // Get Toronto's completion rate per month
-                const torontoCompletionRate = timeLabels.map(date => {
-                    const entry = data.find((item: any) =>
-                        item.city === 'Toronto' && `${item.year}-${String(item.month).padStart(2, '0')}` === date
-                    );
-                    return entry && entry.singlesStarts > 0
-                        ? (entry.singlesComplete / entry.singlesStarts) * 100
-                        : 0;
-                });
+            const hamiltonCompletionRate = calculateCompletionRate("Hamilton");
+            const torontoCompletionRate = calculateCompletionRate("Toronto");
 
-                setChartData({
-                    labels: timeLabels,
-                    datasets: [
-                        {
-                            label: 'Hamilton Completion Rate (%)',
-                            data: hamiltonCompletionRate,
-                            borderColor: 'rgba(75,192,192,1)',
-                            backgroundColor: 'rgba(75,192,192,0.2)',
-                        },
-                        {
-                            label: 'Toronto Completion Rate (%)',
-                            data: torontoCompletionRate,
-                            borderColor: 'rgba(255,99,132,1)',
-                            backgroundColor: 'rgba(255,99,132,0.2)',
-                        }
-                    ],
-                });
-            })
-            .catch(error => console.error('Error fetching housing data:', error));
+            setChartData({
+                labels: timeLabels,
+                datasets: [
+                    {
+                        label: 'Hamilton Completion Rate (%)',
+                        data: hamiltonCompletionRate,
+                        borderColor: 'rgba(75,192,192,1)',
+                        backgroundColor: 'rgba(75,192,192,0.2)',
+                    },
+                    {
+                        label: 'Toronto Completion Rate (%)',
+                        data: torontoCompletionRate,
+                        borderColor: 'rgba(255,99,132,1)',
+                        backgroundColor: 'rgba(255,99,132,0.2)',
+                    }
+                ],
+            });
+        }).catch(error => {
+            console.error('Error fetching or processing housing data:', error);
+        });
     }, []);
 
     return (
@@ -93,7 +97,13 @@ const HousingGraph: React.FC = () => {
 
             <div style={{backgroundColor: '#2c2c2c', padding: '20px', borderRadius: '8px'}}>
                 {chartData ? (
-                    <Line data={chartData} options={{responsive: true, maintainAspectRatio: false}} />
+                    <Line
+                        data={chartData}
+                        options={{
+                            responsive: true,
+                            maintainAspectRatio: false
+                        }}
+                    />
                 ) : (
                     <p>Loading chart data...</p>
                 )}
