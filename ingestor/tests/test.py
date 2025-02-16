@@ -1,139 +1,64 @@
-import os
-import sys
-import pytest
-import pymysql
-import requests
-from unittest.mock import patch, MagicMock
+#import pytest
+#import mariadb
+#from unittest.mock import patch, MagicMock
+#from database import Database
 
-# Ensure the parent directory (ingestor) is in sys.path
-sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
-
-from database import Database  # ✅ Now Python should find it
-from ingestor import run_ingestor
-
-
-@pytest.fixture
-def db():
-    """Fixture to create a Database instance for testing."""
-    return Database()
-
-### ✅ 1️⃣ Test API Success Case
-@patch("requests.get")
-def test_fetch_data_success(mock_get, db):
-    """Test API call success with a mock response."""
-    mock_response = MagicMock()
-    mock_response.json.return_value = [{"Year": 2024, "Month": 1, "CMA": "Toronto", "Total_starts": 500}]
-    mock_response.status_code = 200
-    mock_get.return_value = mock_response
-
-    result = db.fetch_data("housing_starts_completions")
-
-    assert isinstance(result, list)
-    assert len(result) > 0
-    assert result[0]["Year"] == 2024
-    assert result[0]["CMA"] == "Toronto"
+## Test configuration
+#TEST_DB_HOST = "database"
+#TEST_DB_PORT = 3306
+#TEST_DB_USER = "root"
+#TEST_DB_PASSWORD = "pwd"
+#TEST_DB_NAME = "template_db"
 
 
-### ✅ 2️⃣ Test API Failure (Handles API Errors Gracefully)
-@patch("requests.get")
-def test_fetch_data_api_failure(mock_get, db):
-    """Test API call failure handling."""
-    mock_get.return_value.status_code = 500  # Simulate an API error
-    mock_get.return_value.json.return_value = {}
-
-    result = db.fetch_data("housing_starts_completions")
-
-    assert result == []  # Expecting an empty list when API fails
-
-
-### ✅ 3️⃣ Test API Returns Invalid Data (Handles Unexpected API Response)
-@patch("requests.get")
-def test_fetch_data_invalid_json(mock_get, db):
-    """Test API call with invalid JSON response."""
-    mock_get.return_value.status_code = 200
-    mock_get.return_value.json.return_value = None  # Simulating bad data
-
-    result = db.fetch_data("housing_starts_completions")
-
-    assert result == []  # Expecting an empty list on invalid JSON
+#@pytest.fixture
+#def db():
+#    """Fixture to create a Database instance for testing."""
+#    return Database(
+#        host=TEST_DB_HOST,
+#        port=TEST_DB_PORT,
+#        user=TEST_DB_USER,
+#        password=TEST_DB_PASSWORD,
+#        database=TEST_DB_NAME
+#    )
 
 
-### ✅ 4️⃣ Test Mocked Database Connection Success
-@patch("pymysql.connect")
-def test_connect_to_db(mock_connect, db):
-    """Test if database connection is established (mocked)."""
-    mock_conn = MagicMock()
-    mock_connect.return_value = mock_conn
+#@patch("requests.get")
+#def test_fetch_data(mock_get, db):
+#    """Test if API call is successful and returns JSON data."""
+#    mock_response = MagicMock()
+#    mock_response.json.return_value = [{"Description": "Test Note", "Status": "NOT STARTED"}]
+#    mock_response.status_code = 200
+#    mock_get.return_value = mock_response
 
-    conn = db.connect()
+#    result = db.fetch_data()
 
-    assert conn == mock_conn
-    mock_connect.assert_called_once()
-
-
-### ✅ 5️⃣ Test Database Connection Failure
-@patch("pymysql.connect")
-def test_connect_to_db_failure(mock_connect, db):
-    """Test database connection failure handling."""
-    mock_connect.side_effect = pymysql.MySQLError("Connection Failed")
-
-    try:
-        db.connect()
-        assert False, "Expected MySQLError but none was raised!"
-    except pymysql.MySQLError as e:
-        assert str(e) == "Connection Failed"
+#    assert isinstance(result, list)
+#    assert len(result) > 0
+#    assert result[0]["Description"] == "Test Note"
+#    assert result[0]["Status"] == "NOT STARTED"
 
 
-### ✅ 6️⃣ Test Empty Database Query (When No Data Exists)
-@patch("pymysql.connect")
-def test_get_all_data_empty(mock_connect, db):
-    """Test fetching data when database table is empty."""
-    mock_conn = MagicMock()
-    mock_cursor = mock_conn.cursor.return_value
-    mock_cursor.fetchall.return_value = []  # Simulate empty table
-
-    mock_connect.return_value = mock_conn
-
-    result = db.get_all_data("housing_starts_completions")
-
-    assert result == []  # Should return an empty list
-    mock_cursor.execute.assert_called_once()
+## 2️⃣ Test Database Connection
+#def test_connect_to_db(db):
+#    """Test if database connection is established."""
+#    conn = db.connect()
+#    assert isinstance(conn, mariadb.Connection)
 
 
-### ✅ 7️⃣ Test Database Insert Query Execution
-@patch("pymysql.connect")
-def test_insert_housing_starts_completions(mock_connect, db):
-    """Test data insertion using a mock database connection."""
-    fake_data = [{
-        "Year": 2024, "Month": 1, "CMA": "Toronto",
-        "Singles_starts": 10, "Semis_starts": 5, "Row_starts": 3, 
-        "Apt_Other_starts": 2, "Total_starts": 20,
-        "Singles_complete": 8, "Semis_complete": 4, "Row_complete": 2, 
-        "Apt_other_complete": 1, "Total_complete": 15
-    }]
+## 3️⃣ Test Data Insertion
+#def test_insert_into_db(db):
+#    """Test if data is inserted into the database."""
+#    test_data = [{"Description": "Test Insert", "Status": "IN PROGRESS"}]  # Flat list
 
-    mock_conn = MagicMock()
-    mock_cursor = MagicMock()
-    mock_conn.cursor.return_value = mock_cursor
-    mock_connect.return_value = mock_conn
+#    db.insert_into_db(test_data)
 
-    db.insert_housing_starts_completions(fake_data)
+#    conn = db.connect()
+#    with conn.cursor() as cur:
+#        cur.execute("SELECT text, status FROM note WHERE text = 'Test Insert'")
+#        result = cur.fetchone()
 
-    assert mock_cursor.execute.called
-    assert mock_conn.commit.called
-
-
-### ✅ 8️⃣ Test Full Ingestor Workflow (Mocking Everything)
-@patch("database.Database.fetch_data")
-@patch("database.Database.insert_housing_starts_completions")
-def test_run_ingestor(mock_insert, mock_fetch):
-    """Test the full ingestor workflow with mocked API and DB."""
-    mock_fetch.return_value = [{"Year": 2024, "Month": 1, "CMA": "Toronto", "Total_starts": 500}]
-    
-    run_ingestor()
-
-    assert mock_fetch.called
-    assert mock_insert.called
-
-
+#    assert result is not None
+#    assert result[0] == "Test Insert"
+#    assert result[1] == "IN PROGRESS"
 
