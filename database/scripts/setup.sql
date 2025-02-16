@@ -23,7 +23,7 @@ CREATE TABLE IF NOT EXISTS housing_starts_completions (
     apt_other_complete INT DEFAULT 0,
     total_complete INT DEFAULT 0,
 
-    last_updated TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+    last_updated DATE DEFAULT (CURRENT_DATE)
 );
 
 -- Table for Housing Under Construction
@@ -40,7 +40,7 @@ CREATE TABLE IF NOT EXISTS housing_under_construction (
     apt_other_starts INT DEFAULT 0,
     total_starts INT DEFAULT 0,
 
-    last_updated TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+    last_updated DATE DEFAULT (CURRENT_DATE)
 );
 
 -- Table for Apartment Starts

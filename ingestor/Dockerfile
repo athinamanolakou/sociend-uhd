@@ -11,7 +11,7 @@ COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
 # Copy the Python code into the container
-COPY ingestor.py database.py .  
+COPY ingestor.py database.py ./
 
 # Run the script on container start
 CMD ["python", "ingestor.py"]
