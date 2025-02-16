@@ -39,7 +39,8 @@ class Database:
         """Generic method to fetch data from any API endpoint."""
         try:
             response = requests.get(self.API_URLS[key], headers={"Apikey": self.API_KEY})
-            return response.json() if response.status_code == 200 else []
+            data = response.json()
+            return data if isinstance(data, list) else [] 
         except requests.exceptions.RequestException as e:
             print(f"Error fetching {key} data: {e}")
             return []
