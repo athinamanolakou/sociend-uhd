@@ -1,12 +1,8 @@
-## RENAME THIS FILE
-# it must be called .gitlab-ci.yml
-#
-#
-
+## Rename this file to .gitlab-ci.yml
 stages:
   - build
   - lint
-
+  - test  # ✅ Added test stage
 
 # BUILD STAGE
 build-backend:
@@ -20,7 +16,6 @@ build-backend:
   allow_failure: false
 
 # LINT STAGE
-
 lint-backend:
   stage: lint
   image: gradle:7.5-jdk17
@@ -42,3 +37,22 @@ lint-frontend:
     - when: always
   allow_failure: false
 
+# ✅ TEST STAGE (NEW) - Runs Pytest and Coverage
+test-python:
+  stage: test
+  image: python:3.12  # ✅ Use latest Python image
+  before_script:
+    - cd ingestor  # ✅ Change directory to ingestor before running commands
+    - pip install --upgrade pip
+    - pip install pytest coverage  # ✅ Install pytest & coverage
+    - pip install -r requirements.txt  # ✅ Install dependencies
+  script:
+    - coverage run -m pytest tests/test.py  # ✅ Run tests with coverage
+    - coverage report -m  # ✅ Show coverage report in console
+  artifacts:
+    paths:
+      - coverage_html_report/  # ✅ Store coverage results for review
+  rules:
+    - when: always
+  allow_failure: false
+  
