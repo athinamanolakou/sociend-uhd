@@ -37,21 +37,30 @@ lint-frontend:
     - when: always
   allow_failure: false
 
-# ✅ TEST STAGE (NEW) - Runs Pytest and Coverage
 test-python:
   stage: test
-  image: python:3.12  # ✅ Use latest Python image
+  image: python:3.12  
   before_script:
-    - cd ingestor  # ✅ Change directory to ingestor before running commands
+    - cd ingestor  
     - pip install --upgrade pip
-    - pip install pytest coverage  # ✅ Install pytest & coverage
-    - pip install -r requirements.txt  # ✅ Install dependencies
+    - pip install pytest coverage  
+    - pip install -r requirements.txt 
   script:
-    - coverage run -m pytest tests/test.py  # ✅ Run tests with coverage
-    - coverage report -m  # ✅ Show coverage report in console
-  artifacts:
-    paths:
-      - coverage_html_report/  # ✅ Store coverage results for review
+    - coverage run -m pytest tests/test.py  
+    - coverage report -m  
+  rules:
+    - when: always
+  allow_failure: false
+
+test-frontend:
+  stage: test
+  image: node:16
+  before_script:
+    - cd frontend
+    - npm install
+  script:
+    - npm test -- --watchAll=false
+    - npm test -- --coverage --watchAll=false  # Run tests with coverage
   rules:
     - when: always
   allow_failure: false
