@@ -37,6 +37,7 @@ lint-frontend:
     - when: always
   allow_failure: false
 
+# TEST STAGE
 test-python:
   stage: test
   image: python:3.12  
@@ -64,4 +65,20 @@ test-frontend:
   rules:
     - when: always
   allow_failure: false
-  
+
+test-backend:
+  stage: test
+  image: gradle:7.5-jdk17
+  script:
+    - cd backend
+    - chmod +x gradlew
+    - ./gradlew test jacocoTestReport  # ✅ Generate test coverage report
+  artifacts:
+    paths:
+      - backend/build/reports/jacoco/test/html  # ✅ Store the coverage report
+    expire_in: 1 week  # Optional: Set expiry for artifacts
+  coverage: '/TOTAL.*?(\d+\.\d+)%/'  # ✅ Extract coverage percentage in GitLab UI
+  rules:
+    - when: always
+  allow_failure: false
+
