@@ -69,15 +69,12 @@ test-backend:
   stage: test
   image: gradle:7.5-jdk17
   script:
+    - apt-get update && apt-get install -y bsdmainutils
     - cd backend
     - chmod +x gradlew
     - ./gradlew test jacocoTestReport
-    - echo "Coverage Report:"
-    - awk -F, 'BEGIN {print "| %-20s | %-60s | %-25s | %-20s | %-20s | %-15s | %-15s | %-12s | %-12s | %-18s | %-18s | %-15s | %-15s |", "---------------------------------------------------"} 
-      {
-        printf("| %-20s | %-60s | %-25s | %-20s | %-20s | %-15s | %-15s | %-12s | %-12s | %-18s | %-18s | %-15s | %-15s |\n", 
-          $1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13)
-      }' build/reports/jacoco/test/jacocoTestReport.csv
+    - echo "=== CSV Coverage Report ==="
+    - column -t -s, build/reports/jacoco/test/jacocoTestReport.csv 
   rules:
     - when: always
   allow_failure: false
