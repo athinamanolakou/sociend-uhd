@@ -72,13 +72,11 @@ test-backend:
   script:
     - cd backend
     - chmod +x gradlew
-    - ./gradlew test jacocoTestReport  # ✅ Generate test coverage report
-  artifacts:
-    paths:
-      - backend/build/reports/jacoco/test/html  # ✅ Store the coverage report
-    expire_in: 1 week  # Optional: Set expiry for artifacts
-  coverage: '/TOTAL.*?(\d+\.\d+)%/'  # ✅ Extract coverage percentage in GitLab UI
+    - ./gradlew test jacocoTestReport
+    - echo "Coverage Report:"
+    - cat build/reports/jacoco/test/jacocoTestReport.xml | grep -A 2 '<counter type="LINE"'  # ✅ Extract coverage summary
   rules:
     - when: always
   allow_failure: false
+
 
