@@ -16,7 +16,17 @@ ChartJS.register(
 );
 
 const HousingGraph: React.FC = () => {
-    const [chartData, setChartData] = useState<any>(null);
+    interface ChartData {
+        labels: string[];
+        datasets: {
+            label: string;
+            data: number[];
+            borderColor: string;
+            backgroundColor: string;
+        }[];
+    }
+
+    const [chartData, setChartData] = useState<ChartData | null>(null);
 
     useEffect(() => {
         console.log("Fetching starts and completions data for graph...");

@@ -1,5 +1,4 @@
-import React, {useState} from 'react';
-import ProductPitch from './components/ProductPitch';
+import React from 'react';
 import HousingGraph from './components/HousingGraph';
 
 const App: React.FC = () => {
