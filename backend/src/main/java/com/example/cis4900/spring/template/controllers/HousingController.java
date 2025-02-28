@@ -1,11 +1,12 @@
 package com.example.cis4900.spring.template.controllers;
 
 import com.example.cis4900.spring.template.housing.HousingService;
-import com.example.cis4900.spring.template.housing.models.HousingStartsCompletions;
+//import com.example.cis4900.spring.template.housing.models.HousingStartsCompletions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping(path = "/api/housing")
@@ -20,21 +21,27 @@ public class HousingController {
     /**
      * Retrieves all data from the `housing_starts_completions` table.
      */
-    @GetMapping("/starts-completions/all")
-    public List<HousingStartsCompletions> getAllHousingStartsCompletions() {
-        return housingService.getAllHousingStartsCompletions();
+    // @GetMapping("/starts-completions/all")
+    // public List<HousingStartsCompletions> getAllHousingStartsCompletions() {
+    // return housingService.getAllHousingStartsCompletions();
+    // }
+
+    /**
+     * Retrieves total starts and completions data from the
+     * `housing_starts_completions` table for a specific city.
+     */
+    @GetMapping("/starts-completions/total")
+    public List<Map<String, Object>> getHousingTotals() {
+        return housingService.getHousingTotals();
     }
 
     /**
-     * Future endpoints for additional tables (Example placeholders)
+     * Retrieves all data from the `housing_starts_completions` table for a specific
+     * city.
      */
-    @GetMapping("/apartment-starts/all")
-    public String getAllApartmentStarts() {
-        return "This will return apartment start data in the future.";
+    @GetMapping("/starts-completions/ratio")
+    public List<Map<String, Object>> getHousingRatios() {
+        return housingService.getHousingRatios();
     }
 
-    @GetMapping("/housing-under-construction/all")
-    public String getAllHousingUnderConstruction() {
-        return "This will return housing under construction data in the future.";
-    }
 }

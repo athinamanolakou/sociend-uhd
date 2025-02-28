@@ -1,10 +1,8 @@
 import React, {useEffect, useState} from 'react';
 import {Line} from 'react-chartjs-2';
 import {Chart as ChartJS, CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend} from 'chart.js';
-import {getAllHousingStartsCompletions} from '../services/housingService';
-import {HousingStartsCompletions} from '../types/Housing';
+import {getHousingCompletionRatios} from '../services/housingService';
 
-// 🔹 Fix: Register CategoryScale for x-axis (labels like "YYYY-MM")
 ChartJS.register(
     CategoryScale,
     LinearScale,
@@ -29,38 +27,29 @@ const HousingGraph: React.FC = () => {
     const [chartData, setChartData] = useState<ChartData | null>(null);
 
     useEffect(() => {
-        console.log("Fetching starts and completions data for graph...");
-
-        getAllHousingStartsCompletions().then(data => {
+        getHousingCompletionRatios().then(data => {
             if (!data || data.length === 0) {
                 console.warn("No data received from API.");
                 return;
             }
 
-            console.log("Received data:", data);
-
             // Convert year and month into a time label (YYYY-MM format)
             const timeLabels = [...new Set(
-                data.map((entry: HousingStartsCompletions) =>
-                    `${entry.year}-${String(entry.month).padStart(2, '0')}`
-                )
+                data.map(entry => `${entry.year}-${String(entry.month).padStart(2, '0')}`)
             )].sort();
 
-            const calculateCompletionRate = (city: string) => {
+            const getCityCompletionRates = (city: string) => {
                 return timeLabels.map(date => {
-                    const entry = data.find((item: HousingStartsCompletions) =>
+                    const entry = data.find(item =>
                         item.city === city &&
                         `${item.year}-${String(item.month).padStart(2, '0')}` === date
                     );
-
-                    return entry && entry.totalStarts > 0
-                        ? (entry.totalComplete / entry.totalStarts) * 100
-                        : 0;
+                    return entry ? entry.ratio * 100 : 0; // Convert to percentage
                 });
             };
 
-            const hamiltonCompletionRate = calculateCompletionRate("Hamilton");
-            const torontoCompletionRate = calculateCompletionRate("Toronto");
+            const hamiltonCompletionRate = getCityCompletionRates("Hamilton");
+            const torontoCompletionRate = getCityCompletionRates("Toronto");
 
             setChartData({
                 labels: timeLabels,
