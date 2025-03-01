@@ -1,6 +1,6 @@
 import React from 'react';
-import HousingGraph from './components/HousingGraph';
-import HousingStartsGraph from './components/HousingStartsGraph';
+import HousingGraph from './components/HousingCompletionRatio';
+import HousingStartsGraph from './components/HousingTotalStartsCompletions';
 
 const App: React.FC = () => {
   return (
