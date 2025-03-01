@@ -26,7 +26,7 @@ CREATE TABLE IF NOT EXISTS housing_starts_completions (
     last_updated TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 );
 
--- Table for Housing Under Construction
+-- Table for Housing Under Construction (Fixed Duplicate)
 CREATE TABLE IF NOT EXISTS housing_under_construction (
     id INT AUTO_INCREMENT PRIMARY KEY,
     year YEAR NOT NULL,
@@ -96,4 +96,3 @@ CREATE TABLE IF NOT EXISTS apartment_completions (
     
     last_updated TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 );
-

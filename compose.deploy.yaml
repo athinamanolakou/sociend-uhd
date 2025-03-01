@@ -1,108 +1,94 @@
-#Docker Compose is a tool for defining and running multi-container Docker applications. 
-#With Docker Compose, you use a YAML file to configure your application's services, networks, volumes, and other resources.
+version: '3.8' # Specifies the Docker Compose file version
 
-version: '3.8' # Specifies the Docker Compose file version which determines the features available
-
-#This section defines the containers that make up your application. Each service represents a container with its configuration
 services:
-  # Defines the services that make up the application
+  # Reverse proxy service
   swag:
-    #reverse proxy
     image: lscr.io/linuxserver/swag:latest
     container_name: swag
     cap_add:
       - NET_ADMIN
     environment:
-      - PUID=1000
-      - PGID=1000
-      - TZ=Etc/UTC
-      - URL=sociend.socs.uoguelph.ca
-      - VALIDATION=http
-      - STAGING=false #optional
+      - PUID=1000 # User ID for permissions
+      - PGID=1000 # Group ID for permissions
+      - TZ=Etc/UTC # Time zone setting
+      - URL=sociend.socs.uoguelph.ca # Domain name
+      - VALIDATION=http # Method for SSL validation
+      - STAGING=false # Whether to use staging environment
     volumes:
-      - ./swag/config:/config
+      - ./swag/config:/config # Mount configuration volume
     ports:
-      - 443:443
-      - 80:80 #optional
+      - 443:443 # HTTPS port
+      - 80:80 # HTTP port
     depends_on:
-      - frontend
+      - frontend # Ensures frontend starts before swag
     networks:
-      - swag-frontend
-    restart: unless-stopped
+      - swag-frontend # Network for communication with frontend
+    restart: unless-stopped # Restart policy
 
+  # Backend service
   backend:
-    # The Spring application service
-    #Build Context: build: ./spring tells Docker to build an image using the Dockerfile located in the ./spring directory.
-    build: ./backend # Builds the Docker image from the Dockerfile located in the './spring' directory
-    #Ports: ports: - "8080:8080" maps port 8080 of the container to port 8080 on the host, allowing external access to the Spring application running inside the container.
+    build: ./backend # Builds from the backend directory
     ports:
-      - "8080:8080" # Exposes port 8080 on the host and maps it to port 8080 in the container
-    #Environment Variables: These are passed to the container at runtime. For example, DB_ADDRESS is set to jdbc:mysql://mysql:3306, indicating the application should connect to a MySQL database at the given JDBC URL.
+      - "8080:8080" # Maps container port 8080 to host port 8080
     environment:
-      # Environment variables for the Spring application
-      - DB_ADDRESS=jdbc:mysql://database:3306 # JDBC URL for the MySQL database, 'mysql' is the service name in docker-compose
-      - DB_DATABASE=template_db # The name of the database to use
-      - DB_USER=root # The username for the database
-      - DB_PASSWORD=pwd # The password for the database
-    #Networks: The service is attached to spring-mysql and spring-react networks, enabling network communication with the MySQL and React services.
+      - DB_ADDRESS=jdbc:mysql://database:3306 # JDBC URL for database
+      - DB_DATABASE=template_db # Database name
+      - DB_USER=root # Database username
+      - DB_PASSWORD=pwd # Database password
     networks:
-      # Networks the Spring service is connected to
-      - backend-database # Network for communicating with MySQL
-      - backend-frontend # Network for communicating with the React service
-    #command: /bin/sh -c "while true; do sleep 3600; done"
+      - backend-database # Network to connect with database
+      - backend-frontend # Network to connect with frontend
+
+  # Database service
   database:
-    # The MySQL database service
-    build: ./database # Builds the Docker image from the Dockerfile in the './mysql' directory
-    #Environment Variables: Used to configure the MySQL server, like setting the root password (MYSQL_ROOT_PASSWORD) and specifying the database to create at startup (MYSQL_DATABASE).
+    build: ./database # Builds from the database directory
     environment:
-      # Environment variables for the MySQL service
-      - MYSQL_ROOT_PASSWORD=pwd # The root password for MySQL
-      - MYSQL_DATABASE=template_db # The database to create when the container starts
-    #Volumes: volumes: - mariadb_data:/var/lib/mysql mounts the named volume mariadb_data to /var/lib/mysql inside the container, providing persistent storage for the database.
+      - MYSQL_ROOT_PASSWORD=pwd # Root password for MySQL
+      - MYSQL_DATABASE=template_db # Initial database name
     volumes:
-      # Persistent storage for the MySQL database
-      - mariadb_data:/var/lib/mysql # Maps 'mariadb_data' volume to the data directory of MySQL
+      - mariadb_data:/var/lib/mysql # Persistent database storage
     networks:
-      # Network the MySQL service is connected to
-      - backend-database # Network for communicating with the Spring service
+      - backend-database # Network for backend communication
+      - ingester-database # Network for ingestor communication
     ports:
-      - "3306:3306" # Exposes port 3306 on the host and maps it to port 3306 in the container
+      - "3306:3306" # Exposes MySQL port
+    healthcheck:
+      test: [ "CMD", "mysqladmin", "ping", "-h", "127.0.0.1", "-uroot", "-ppwd" ] # Checks if MySQL is running
+      interval: 10s # Check every 10 seconds
+      retries: 15 # Retry up to 15 times
+      start_period: 40s # Wait 40 seconds before first check
+      timeout: 5s # Timeout for health check
 
+  # Frontend service
   frontend:
-    # The React frontend service
-    build: ./frontend # Builds the Docker image from the Dockerfile in the './react' directory
+    build: ./frontend # Builds from the frontend directory
     ports:
-      - "3000:3000" # Exposes port 3000 on the host and maps it to port 3000 in the container
+      - "3000:3000" # Maps frontend container port to host
     environment:
-      # Environment variable for the React service
-      - BACKEND_PROXY=http://backend:8080 # The URL to the backend Spring service
+      - BACKEND_PROXY=http://backend:8080 # Proxy URL for backend
     networks:
-      # Network the React service is connected to
-      - backend-frontend # Network for communicating with the backend service
-      - swag-frontend # Network to allow reverse proxy to communicate with frontend
+      - backend-frontend # Connects to backend
+      - swag-frontend # Connects to reverse proxy
 
-  # added for data ingestor
+  # Data ingestion service
   ingestor:
-    # NEW PYTHON SERVICE
-    build: ./ingestor # Path to your Python Dockerfile
+    build: ./ingestor # Builds from the ingestor directory
     environment:
-      - DB_HOST=database
-      - DB_DATABASE=template_db
-      - DB_USER=root
-      - DB_PASSWORD=pwd
+      - DB_HOST=database # Database host
+      - DB_DATABASE=template_db # Database name
+      - DB_USER=root # Database username
+      - DB_PASSWORD=pwd # Database password
     depends_on:
-      #- backend  # Ensures backend is running before ingestion starts
-      - database # Ensures database is ready
+      - database # Ensures database starts before ingestor
     networks:
-      - ingester-database
+      - ingester-database # Connects to database
 
 volumes:
   mariadb_data:
-    # Defines a named volume 'mariadb_data' for the MySQL service to use for data persistence
+    # Defines a named volume for MySQL data persistence
 
 networks:
-  # Defines the networks used by the services
-  backend-database: # Network used by the backend and database services
-  backend-frontend: # Network used by the backend and frontend services
-  ingester-database:
-  swag-frontend: #Network used by the Swag and React services
+  backend-database: # Network connecting backend and database
+  backend-frontend: # Network connecting backend and frontend
+  ingester-database: # Network connecting ingestor and database
+  swag-frontend: # Network connecting reverse proxy and frontend

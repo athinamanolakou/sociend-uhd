@@ -1,12 +1,7 @@
-## RENAME THIS FILE
-# it must be called .gitlab-ci.yml
-#
-#
-
 stages:
   - build
   - lint
-
+  - test  # ✅ Added test stage
 
 # BUILD STAGE
 build-backend:
@@ -20,7 +15,6 @@ build-backend:
   allow_failure: false
 
 # LINT STAGE
-
 lint-backend:
   stage: lint
   image: gradle:7.5-jdk17
@@ -42,3 +36,45 @@ lint-frontend:
     - when: always
   allow_failure: false
 
+# TEST STAGE
+test-python:
+  stage: test
+  image: python:3.12  
+  before_script:
+    - cd ingestor  
+    - pip install --upgrade pip
+    - pip install pytest coverage  
+    - pip install -r requirements.txt 
+  script:
+    - coverage run -m pytest tests/test.py  
+    - coverage report -m  
+  rules:
+    - when: always
+  allow_failure: false
+
+test-frontend:
+  stage: test
+  image: node:16
+  before_script:
+    - cd frontend
+    - npm install
+  script:
+    - npm test -- --watchAll=false
+    - npm test -- --coverage --watchAll=false  # Run tests with coverage
+  rules:
+    - when: always
+  allow_failure: true
+
+test-backend:
+  stage: test
+  image: gradle:7.5-jdk17
+  script:
+    - apt-get update && apt-get install -y bsdmainutils
+    - cd backend
+    - chmod +x gradlew
+    - ./gradlew test jacocoTestReport
+    - echo "=== CSV Coverage Report ==="
+    - column -t -s, build/reports/jacoco/test/jacocoTestReport.csv 
+  rules:
+    - when: always
+  allow_failure: false
