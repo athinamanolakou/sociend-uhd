@@ -43,7 +43,7 @@ export const getHousingCompletionRatios = async (): Promise<{city: string; year:
 /**
  * Fetch housing completion ratios from the backend.
  */
-export const getHousingTotalStartsCompletions = async (): Promise<{year: number; month: number; totalStarts: number; totalCompletions: number}[]> => {
+export const getHousingTotalStartsCompletions = async (): Promise<{city: string; year: number; month: number; totalStarts: number; totalCompletions: number}[]> => {
     console.log('Fetching housing total starts and completions from:', `${API_URL}/starts-completions/total`);
     try {
         const response = await fetch(`${API_URL}/starts-completions/total`);
