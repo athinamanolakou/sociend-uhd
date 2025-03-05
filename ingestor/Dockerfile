@@ -1,17 +1,22 @@
-# Use the latest stable Python runtime as a parent image
 FROM python:3.11-slim
 
-# Set the working directory in the container
-WORKDIR /usr/app/
+# Set working directory
+WORKDIR /usr/app
 
-# Copy the requirements file into the container
+# Install dependencies
 COPY requirements.txt .
-
-# Install Python dependencies
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Copy the Python code into the container
-COPY ingestor.py database.py ./
+# Install Cron
+RUN apt-get update && apt-get -y install cron
 
-# Run the script on container start
-CMD ["python", "ingestor.py"]
+# Copy Application
+COPY src .
+
+# Copy and set up the cron job
+COPY ingester-cron /etc/cron.d/ingester-cron
+RUN chmod 644 /etc/cron.d/ingester-cron
+RUN crontab /etc/cron.d/ingester-cron
+RUN touch /var/log/cron.log
+RUN printenv > /etc/environment
+CMD cron && tail -f /var/log/cron.log
