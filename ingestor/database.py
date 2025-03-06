@@ -5,7 +5,7 @@ import os
 class Database:
     def __init__(self):
         """Initialize database connection settings from environment variables."""
-        self.host = os.getenv("DB_HOST", "database")
+        self.host = os.getenv("DB_HOST", "localhost")
         self.port = int(os.getenv("DB_PORT", 3306))  # Default 3306
         self.user = os.getenv("DB_USER", "root")
         self.password = os.getenv("DB_PASSWORD", "pwd")
@@ -19,6 +19,7 @@ class Database:
             "housing_under_construction": "https://cis-data-service.socs.uoguelph.ca/data/housing_under_construction",
             "apartment_starts": "https://cis-data-service.socs.uoguelph.ca/data/apartment_starts",
             "apartment_completions": "https://cis-data-service.socs.uoguelph.ca/data/apartment_completions",
+            "labour_market": "https://cis-data-service.socs.uoguelph.ca/data/labour_market",
         }
 
     def connect(self):
@@ -222,6 +223,94 @@ class Database:
                 int(entry.get("Row", 0) or 0),
                 int(entry.get("Apt. and Other", 0) or 0),
                 int(entry.get("Total", 0) or 0)
+            ))
+
+        conn.commit()
+        cursor.close()
+
+    def insert_labour_market(self, data):
+        """
+        Insert labour market data into the database.
+        Assumes that the database table "labour_market" exists with columns matching:
+        rec_num, survyear, survmnth, lfsstat, prov, cma, age_12, age_6, sex, marstat, educ,
+        mjh, everwork, ftptlast, cowmain, immig, NAICS_21, NOC_10, NOC_43, HRLYEARN, UNION,
+        PERMTEMP, ESTSIZE, FIRMSIZE, DURUNEMP, FLOWUNEM, SCHOOLN, EFAMTYPE, FINALWT.
+        """
+        conn = self.connect()
+        cursor = conn.cursor()
+
+        query = """
+            INSERT INTO labour_market (
+                rec_num, survyear, survmnth, lfsstat, prov, cma, age_12, age_6, sex, marstat, educ,
+                mjh, everwork, ftptlast, cowmain, immig, NAICS_21, NOC_10, NOC_43, HRLYEARN, UNION,
+                PERMTEMP, ESTSIZE, FIRMSIZE, DURUNEMP, FLOWUNEM, SCHOOLN, EFAMTYPE, FINALWT
+            ) VALUES (
+                %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s,
+                %s, %s, %s, %s, %s, %s, %s, %s
+            )
+            ON DUPLICATE KEY UPDATE
+                survyear = VALUES(survyear),
+                survmnth = VALUES(survmnth),
+                lfsstat = VALUES(lfsstat),
+                prov = VALUES(prov),
+                cma = VALUES(cma),
+                age_12 = VALUES(age_12),
+                age_6 = VALUES(age_6),
+                sex = VALUES(sex),
+                marstat = VALUES(marstat),
+                educ = VALUES(educ),
+                mjh = VALUES(mjh),
+                everwork = VALUES(everwork),
+                ftptlast = VALUES(ftptlast),
+                cowmain = VALUES(cowmain),
+                immig = VALUES(immig),
+                NAICS_21 = VALUES(NAICS_21),
+                NOC_10 = VALUES(NOC_10),
+                NOC_43 = VALUES(NOC_43),
+                HRLYEARN = VALUES(HRLYEARN),
+                UNION = VALUES(UNION),
+                PERMTEMP = VALUES(PERMTEMP),
+                ESTSIZE = VALUES(ESTSIZE),
+                FIRMSIZE = VALUES(FIRMSIZE),
+                DURUNEMP = VALUES(DURUNEMP),
+                FLOWUNEM = VALUES(FLOWUNEM),
+                SCHOOLN = VALUES(SCHOOLN),
+                EFAMTYPE = VALUES(EFAMTYPE),
+                FINALWT = VALUES(FINALWT),
+                last_updated = CURRENT_TIMESTAMP;
+        """
+
+        for entry in data:
+            cursor.execute(query, (
+                int(entry.get("rec_num", 0)),
+                int(entry.get("survyear", 0)),
+                int(entry.get("survmnth", 0)),
+                int(entry.get("lfsstat", 0)),
+                int(entry.get("prov", 0)),
+                int(entry.get("cma", 0)),
+                int(entry.get("age_12", 0)),
+                int(entry.get("age_6", 0)),
+                int(entry.get("sex", 0)),
+                int(entry.get("marstat", 0)),
+                int(entry.get("educ", 0)),
+                int(entry.get("mjh", 0)),
+                int(entry.get("everwork", 0)),
+                int(entry.get("ftptlast", 0)),
+                int(entry.get("cowmain", 0)),
+                int(entry.get("immig", 0)),
+                int(entry.get("NAICS_21", 0)),
+                int(entry.get("NOC_10", 0)),
+                int(entry.get("NOC_43", 0)),
+                float(entry.get("HRLYEARN", 0.0)),
+                int(entry.get("UNION", 0)),
+                int(entry.get("PERMTEMP", 0)),
+                int(entry.get("ESTSIZE", 0)),
+                int(entry.get("FIRMSIZE", 0)),
+                int(entry.get("DURUNEMP", 0)),
+                int(entry.get("FLOWUNEM", 0)),
+                int(entry.get("SCHOOLN", 0)),
+                int(entry.get("EFAMTYPE", 0)),
+                float(entry.get("FINALWT", 0.0))
             ))
 
         conn.commit()
