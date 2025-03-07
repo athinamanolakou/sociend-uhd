@@ -14,6 +14,7 @@ def run_ingestor():
         ("housing_under_construction", db.insert_housing_under_construction),
         ("apartment_starts", db.insert_apartment_starts),
         ("apartment_completions", db.insert_apartment_completions),
+        ("labour_market", db.insert_labour_market),
     ]
 
     for table_name, insert_function in tables:
@@ -40,7 +41,8 @@ if __name__ == "__main__":
         "apartment_starts",
         "apartment_completions",
         "housing_starts_completions",
-        "housing_under_construction"
+        "housing_under_construction",
+        "labour_market"
     ]
 
     for table in tables:
