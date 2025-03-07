@@ -1,9 +1,10 @@
-import React, { useState } from 'react';
+import React, {useState} from 'react';
 import Navbar from './components/Navbar';
 import HousingCompletionRatio from './components/HousingCompletionRatio';
 import HousingTotalStartsCompletions from './components/HousingTotalStartsCompletions';
 import ProductPitch from './components/ProductPitch';
-import LabourMarket from './components/LabourMarket';
+import LabourMarketOccupationsHamilton from './components/LabourMarketOccupationsHamilton';
+import LabourMarketOccupationsToronto from './components/LabourMarketOccupationsToronto';
 
 const App: React.FC = () => {
   const [page, setPage] = useState<'pitch' | 'starts' | 'labour'>('pitch');
@@ -13,14 +14,19 @@ const App: React.FC = () => {
       <Navbar setPage={setPage} />
 
       {page === 'pitch' && <ProductPitch />}
-      
+
       {page === 'starts' && (
         <>
           <HousingCompletionRatio />
           <HousingTotalStartsCompletions />
         </>
-      )}   
-      {page === 'labour' && <LabourMarket />}
+      )}
+      {page === 'labour' && (
+        <>
+          <LabourMarketOccupationsHamilton />
+          <LabourMarketOccupationsToronto />
+        </>
+      )}
     </div>
   );
 };
