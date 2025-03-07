@@ -1,9 +1,10 @@
-import React, { useState } from 'react';
+import React, {useState} from 'react';
 import Navbar from './components/Navbar';
 import HousingGraph from './components/HousingGraph';
 import HousingStartsGraph from './components/HousingStartsGraph';
 import ProductPitch from './components/ProductPitch';
-import LabourMarket from './components/LabourMarket';
+import LabourMarketOccupationsHamilton from './components/LabourMarketOccupationsHamilton';
+import LabourMarketOccupationsToronto from './components/LabourMarketOccupationsToronto';
 
 const App: React.FC = () => {
   const [page, setPage] = useState<'pitch' | 'starts' | 'labour'>('pitch');
@@ -13,15 +14,19 @@ const App: React.FC = () => {
       <Navbar setPage={setPage} />
 
       {page === 'pitch' && <ProductPitch />}
-      
-      {/* ✅ FIX: Add missing curly braces here */}
+
       {page === 'starts' && (
         <>
           <HousingGraph />
           <HousingStartsGraph />
         </>
-      )}   
-      {page === 'labour' && <LabourMarket />}
+      )}
+      {page === 'labour' && (
+        <>
+          <LabourMarketOccupationsHamilton />
+          <LabourMarketOccupationsToronto />
+        </>
+      )}
     </div>
   );
 };
