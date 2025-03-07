@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import Navbar from './components/Navbar';
-import HousingGraph from './components/HousingCompletionRatios';
+import HousingGraph from './components/HousingCompletionRatio';
 import HousingStartsGraph from './components/HousingTotalStartsCompletions';
 import ProductPitch from './components/ProductPitch';
 import LabourMarket from './components/LabourMarket';
