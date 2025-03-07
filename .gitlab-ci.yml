@@ -122,7 +122,7 @@ sonar_analysis_frontend:
     - main
 
 sonar_analysis_ingestor:
-  image: python:3.12
+  image: sonarsource/sonar-scanner-cli:latest
   stage: sonar_analysis
   script:
     - cd ingestor
