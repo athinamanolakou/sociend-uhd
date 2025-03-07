@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import Navbar from './components/Navbar';
-import HousingGraph from './components/HousingGraph';
+import HousingGraph from './components/getHousingCompletionRatios';
 import HousingStartsGraph from './components/HousingStartsGraph';
 import ProductPitch from './components/ProductPitch';
 import LabourMarket from './components/LabourMarket';
@@ -14,7 +14,6 @@ const App: React.FC = () => {
 
       {page === 'pitch' && <ProductPitch />}
       
-      {/* ✅ FIX: Add missing curly braces here */}
       {page === 'starts' && (
         <>
           <HousingGraph />
