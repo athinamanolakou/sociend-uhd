@@ -25,3 +25,4 @@ export interface HousingStartsCompletions {
 
     lastUpdated: string;  // ISO timestamp for record updates
 }
+

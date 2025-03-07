@@ -58,3 +58,22 @@ export const getHousingTotalStartsCompletions = async (): Promise<{city: string;
         return [];
     }
 }
+
+/**
+ * Fetch labour market occupations data from the backend.
+ */
+export const getLabourMarketOccupations = async (): Promise<{city: string; occupation: string; count: number}[]> => {
+    console.log('Fetching labour market occupations from:', `${API_URL}/labour-market/occupation`);
+    try {
+        const response = await fetch(`${API_URL}/labour-market/occupation`);
+        if (!response.ok) {
+            throw new Error(`HTTP error! Status: ${response.status}`);
+        }
+        const data = await response.json();
+        console.log('API response:', data);
+        return data;
+    } catch (error) {
+        console.error('Error fetching labour market occupations:', error);
+        return [];
+    }
+}
