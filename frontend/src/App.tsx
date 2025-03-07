@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import Navbar from './components/Navbar';
-import HousingGraph from './components/getHousingCompletionRatios';
-import HousingStartsGraph from './components/HousingStartsGraph';
+import HousingGraph from './components/HousingCompletionRatios';
+import HousingStartsGraph from './components/HousingTotalStartsCompletions';
 import ProductPitch from './components/ProductPitch';
 import LabourMarket from './components/LabourMarket';
 
