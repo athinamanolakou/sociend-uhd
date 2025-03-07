@@ -1,7 +1,8 @@
 stages:
   - build
   - lint
-  - test  # ✅ Added test stage
+  - test  
+  - sonar_analysis
 
 # BUILD STAGE
 build-backend:
@@ -78,3 +79,59 @@ test-backend:
   rules:
     - when: always
   allow_failure: false
+
+# ========================
+# ✅ SONARQUBE VARIABLES
+# ========================
+variables:
+  SONAR_HOST_URL: "https://sonarqube.socs.uoguelph.ca"
+  SONAR_USER_HOME: "${CI_PROJECT_DIR}/.sonar"  
+  GIT_DEPTH: "0"  # Fetches all branches (needed for Sonar)
+  SONAR_BACKEND_TOKEN: "sqp_81157c9b3c8e28531d29df20ff22927f501ee3ec"
+  SONAR_FRONTEND_TOKEN: "sqp_250ab61ed75bff236b6b22f45de811d87757f646"
+  SONAR_INGESTOR_TOKEN: "sqp_771479738e48b4f395e6fa9a81b6f5fffdd12764" 
+
+# ========================
+# 🚀 SONAR ANALYSIS STAGE (NEW)
+# ========================
+sonar_analysis_backend:
+  image: gradle:8.2.0-jdk17-jammy
+  stage: sonar_analysis
+  script:
+    - cd backend
+    - gradle build -x checkstyleMain -x checkstyleTest sonar -Dsonar.login=$SONAR_BACKEND_TOKEN  
+  allow_failure: true
+  only:
+    - main  
+
+sonar_analysis_frontend:
+  image: sonarsource/sonar-scanner-cli:latest
+  stage: sonar_analysis
+  script:
+    - cd frontend
+    - npm install  
+    - npm run build  
+    - sonar-scanner 
+        -Dsonar.projectKey=sociend_frontend
+        -Dsonar.sources=. 
+        -Dsonar.host.url=$SONAR_HOST_URL 
+        -Dsonar.login=$SONAR_FRONTEND_TOKEN
+        -Dsonar.qualitygate.wait=true
+  allow_failure: true
+  only:
+    - main
+
+sonar_analysis_ingestor:
+  image: sonarsource/sonar-scanner-cli:latest
+  stage: sonar_analysis
+  script:
+    - cd ingestor
+    - sonar-scanner 
+        -Dsonar.projectKey=sociend_ingester
+        -Dsonar.sources=. 
+        -Dsonar.host.url=$SONAR_HOST_URL 
+        -Dsonar.login=$SONAR_INGESTOR_TOKEN
+        -Dsonar.qualitygate.wait=true
+  allow_failure: true
+  only:
+    - main
