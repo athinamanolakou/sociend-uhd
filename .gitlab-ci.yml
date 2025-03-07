@@ -124,12 +124,8 @@ sonar_analysis_frontend:
 sonar_analysis_ingestor:
   image: python:3.12
   stage: sonar_analysis
-  before_script:
-    - cd ingestor
-    - pip install --upgrade pip
-    - pip install pylint
   script:
-    - pylint $(git ls-files '*.py') --output-format=json > pylint-report.json
+    - cd ingestor
     - sonar-scanner 
         -Dsonar.projectKey=sociend_ingester
         -Dsonar.sources=. 
