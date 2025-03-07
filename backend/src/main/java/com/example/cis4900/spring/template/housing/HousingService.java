@@ -10,4 +10,6 @@ public interface HousingService {
     List<Map<String, Object>> getHousingTotals();
 
     List<Map<String, Object>> getHousingRatios();
+
+    List<Map<String, Object>> getLabourMarketOccupations();
 }

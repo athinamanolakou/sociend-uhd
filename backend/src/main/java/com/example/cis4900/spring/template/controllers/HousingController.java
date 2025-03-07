@@ -44,4 +44,12 @@ public class HousingController {
         return housingService.getHousingRatios();
     }
 
+    /**
+     * Retrieves all data from the 'labour_market' table for occupation data.
+     */
+    @GetMapping("/labour-market/occupation")
+    public List<Map<String, Object>> getLabourMarketOccupations() {
+        return housingService.getLabourMarketOccupations();
+    }
+
 }
