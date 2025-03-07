@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import Navbar from './components/Navbar';
-import HousingGraph from './components/HousingCompletionRatio';
-import HousingStartsGraph from './components/HousingTotalStartsCompletions';
+import HousingCompletionRatio from './components/HousingCompletionRatio';
+import HousingTotalStartsCompletions from './components/HousingTotalStartsCompletions';
 import ProductPitch from './components/ProductPitch';
 import LabourMarket from './components/LabourMarket';
 
@@ -16,8 +16,8 @@ const App: React.FC = () => {
       
       {page === 'starts' && (
         <>
-          <HousingGraph />
-          <HousingStartsGraph />
+          <HousingCompletionRatio />
+          <HousingTotalStartsCompletions />
         </>
       )}   
       {page === 'labour' && <LabourMarket />}
