@@ -78,8 +78,9 @@ public class HousingServiceImpl implements HousingService {
 
         // Helper method to convert NOC_43 numeric values to occupation names
         private String getOccupationName(Integer noc43) {
-                if (noc43 == null)
+                if (noc43 == null) {
                         return "Unknown";
+                }
 
                 return switch (noc43) {
                         case 1 -> "Legislative and senior management occupations";
@@ -107,8 +108,8 @@ public class HousingServiceImpl implements HousingService {
                         case 23 -> "Occupations in front-line public protection services";
                         case 24 -> "Paraprofessional occupations in legal, social, community and education services";
                         case 25 -> "Assisting occupations in education and in legal and public protection";
-                        case 26 ->
-                                "Care providers and public protection support occupations and student monitors, crossing guards and related occupations";
+                        case 26 -> "Care providers and public protection support occupations and "
+                                        + "student monitors, crossing guards and related occupations";
                         case 27 -> "Professional occupations in art and culture";
                         case 28 -> "Technical occupations in art, culture and sport";
                         case 29 -> "Occupations in art, culture and sport";

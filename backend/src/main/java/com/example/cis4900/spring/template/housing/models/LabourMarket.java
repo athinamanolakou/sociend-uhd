@@ -96,7 +96,8 @@ public class LabourMarket {
     @Column(name = "FINALWT")
     private Float finalWt;
 
-    @Column(name = "last_updated", insertable = false, updatable = false, columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP")
+    @Column(name = "last_updated", insertable = false, updatable = false, 
+            columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP")
     private Timestamp lastUpdated;
 
     // Default constructor required by JPA
