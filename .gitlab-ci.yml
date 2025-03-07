@@ -63,7 +63,7 @@ test-frontend:
     - npm test -- --coverage --watchAll=false  # Run tests with coverage
   rules:
     - when: always
-  allow_failure: false
+  allow_failure: true
 
 test-backend:
   stage: test

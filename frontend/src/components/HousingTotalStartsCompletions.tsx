@@ -100,7 +100,7 @@ const HousingStartsGraph: React.FC = () => {
                 marginBottom: '20px',
                 color: '#FFD700',
             }}>
-                Housing Starts and Completions (Toronto vs Hamilton)
+                Housing Starts and Completions (Hamilton vs Toronto) - Monthly
             </h1>
 
             <div style={{ backgroundColor: '#2c2c2c', padding: '20px', borderRadius: '8px' }}>
