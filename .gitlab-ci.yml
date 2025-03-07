@@ -99,7 +99,7 @@ sonar_analysis_backend:
   stage: sonar_analysis
   script:
     - cd backend
-    - gradle build -x checkstyleMain -x checkstyleTest sonar -Dsonar.login=$SONAR_BACKEND_TOKEN  
+    - gradle build -x checkstyleMain -x checkstyleTest sonar -Dsonar.token=$SONAR_BACKEND_TOKEN  
   allow_failure: true
   only:
     - main  
