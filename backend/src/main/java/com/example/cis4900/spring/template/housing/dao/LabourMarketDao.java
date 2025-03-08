@@ -6,7 +6,7 @@ import org.springframework.data.repository.CrudRepository;
 
 import java.util.List;
 
-public interface HousingLabourMarketDao extends CrudRepository<LabourMarket, Integer> {
+public interface LabourMarketDao extends CrudRepository<LabourMarket, Integer> {
 
     @Query("SELECT h FROM labourMarket h")
     List<LabourMarket> findAllData();

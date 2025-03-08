@@ -18,7 +18,7 @@ public class HousingServiceImpl implements HousingService {
         private HousingStartsCompletionsDao housingDao;
 
         @Autowired
-        private HousingLabourMarketDao labourDao;
+        private LabourMarketDao labourDao;
 
         @Override
         public List<Map<String, Object>> getHousingTotals() {
