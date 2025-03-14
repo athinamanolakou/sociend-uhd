@@ -52,4 +52,11 @@ public class HousingController {
         return housingService.getLabourMarketOccupations();
     }
 
+    /**
+     * Retrieves all data from the 'labour_market' table for family type data.
+     */
+    @GetMapping("/labour-market/family-type")
+    public List<Map<String, Object>> getLabourMarketFamilyType() {
+        return housingService.getLabourMarketFamilyType();
+    }
 }
