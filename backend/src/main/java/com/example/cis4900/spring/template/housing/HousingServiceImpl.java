@@ -130,7 +130,7 @@ public class HousingServiceImpl implements HousingService {
                 return allData.stream().map(l -> {
                         Map<String, Object> result = new HashMap<>();
                         result.put("city", l.getCity());
-                        result.put("familyType", getFamilyTypes(l.getEfamtype()));
+                        result.put("familyType", getFamilyType(l.getEfamtype()));
 
                         return result;
                 }).collect(Collectors.toList());
