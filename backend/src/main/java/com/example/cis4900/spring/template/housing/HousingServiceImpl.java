@@ -134,7 +134,7 @@ public class HousingServiceImpl implements HousingService {
                 return allData.stream().map(l -> {
                         Map<String, Object> result = new HashMap<>();
                         result.put("city", l.getCity());
-                        result.put("familyType", getFamilyType(l.getEfamtype()));
+                        result.put("familyType", getFamilyTypes(l.getEfamtype()));
 
                         return result;
                 }).collect(Collectors.toList());
@@ -144,7 +144,7 @@ public class HousingServiceImpl implements HousingService {
                 return OCCUPATION_MAP.getOrDefault(noc43, "Unknown Occupation");
         }
 
-        private String getFamilyType(Integer efamtype) {
+        private String getFamilyTypes(Integer efamtype) {
                 return FAMILY_TYPE_MAP.getOrDefault(efamtype, "Unknown Family Type");
         }
 }

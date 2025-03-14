@@ -4,12 +4,17 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 import com.example.cis4900.spring.template.housing.dao.HousingStartsCompletionsDao;
+import com.example.cis4900.spring.template.housing.dao.LabourMarketDao;
 import com.example.cis4900.spring.template.housing.models.HousingStartsCompletions;
+import com.example.cis4900.spring.template.housing.models.LabourMarket;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
+import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
+
 import java.sql.Timestamp;
 import java.time.Year;
 import java.util.List;
@@ -20,6 +25,10 @@ class HousingServiceImplTest {
 
     @Mock
     private HousingStartsCompletionsDao housingDao;
+
+    @Mock
+    private LabourMarketDao labourDao;
+
 
     @InjectMocks
     private HousingServiceImpl housingService;
@@ -111,4 +120,35 @@ class HousingServiceImplTest {
         assertNotNull(result);
         assertTrue(result.isEmpty());
     }
+
+    @Test
+    void testGetLabourMarketFamilyTypes_ReturnsData() {
+        List<LabourMarket> mockData = List.of(
+                new LabourMarket.Builder().cma(1).eFamType(2).build(),
+                new LabourMarket.Builder().cma(3).eFamType(4).build()
+        );
+        when(labourDao.findAllData()).thenReturn(mockData);
+
+        List<Map<String, Object>> result = housingService.getLabourMarketFamilyTypes();
+
+        
+        System.out.println("Test Output: " + result);
+
+        assertNotNull(result);
+        assertEquals(2, result.size());
+        assertEquals(1, result.get(0).get("city"));
+       // assertEquals(2, result.get(0).get("familyType"));
+    }
+
+    @Test
+    void testGetLabourMarketFamilyTypes_EmptyResponse() {
+
+        when(labourDao.findAllData()).thenReturn(List.of());
+
+        List<Map<String, Object>> result = housingService.getLabourMarketFamilyTypes();
+
+        assertNotNull(result);
+        assertTrue(result.isEmpty());  
+    }
+    
 }
