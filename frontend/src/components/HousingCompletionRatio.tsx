@@ -44,7 +44,7 @@ const processChartData = (data: typeof mockData): ChartData => {
     return { labels: [], datasets: [] }; // Ensure a valid return value
   }
 
-  const timeLabels = [...new Set(data.map(entry => `${entry.year}-${String(entry.month).padStart(2, "0")}`))].sort();
+  const timeLabels = [...new Set(data.map(entry => `${entry.year}-${String(entry.month).padStart(2, "0")}`))].sort((a, b) => a.localeCompare(b));
 
   const getCityCompletionRates = (city: string) =>
     timeLabels.map(date => {
