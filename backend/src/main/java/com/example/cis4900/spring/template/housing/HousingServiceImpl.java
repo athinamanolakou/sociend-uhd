@@ -124,7 +124,7 @@ public class HousingServiceImpl implements HousingService {
         }
 
         @Override
-        public List<Map<String, Object>> getLabourMarketFamilyType() {
+        public List<Map<String, Object>> getLabourMarketFamilyTypes() {
                 List<LabourMarket> allData = labourDao.findAllData();
 
                 return allData.stream().map(l -> {
