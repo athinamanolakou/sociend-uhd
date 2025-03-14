@@ -77,3 +77,22 @@ export const getLabourMarketOccupations = async (): Promise<{city: string; occup
         return [];
     }
 }
+
+/**
+ * Fetch labour market family type data from the backend.
+ */
+export const getLabourMarketFamilyTypes = async (): Promise<{city: string; familyType: string; count: number}[]> => {
+    console.log('Fetching labour market family types from:', `${API_URL}/labour-market/family-type`);
+    try {
+        const response = await fetch(`${API_URL}/labour-market/family-type`);
+        if (!response.ok) {
+            throw new Error(`HTTP error! Status: ${response.status}`);
+        }
+        const data = await response.json();
+        console.log('API response:', data);
+        return data;
+    } catch (error) {
+        console.error('Error fetching labour market family types:', error);
+        return [];
+    }
+}

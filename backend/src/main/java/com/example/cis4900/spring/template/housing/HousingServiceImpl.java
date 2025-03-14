@@ -23,11 +23,14 @@ public class HousingServiceImpl implements HousingService {
         private static final Map<Integer, String> OCCUPATION_MAP = Map.ofEntries(
                         Map.entry(1, "Legislative and senior management occupations"),
                         Map.entry(2, "Specialized middle management occupations"),
-                        Map.entry(3, "Middle management occupations in retail and wholesale trade and customer services"),
-                        Map.entry(4, "Middle management occupations in trades, transportation, production and utilities"),
+                        Map.entry(3, "Middle management occupations in retail and wholesale trade and customer "
+                                        + "services"),
+                        Map.entry(4, "Middle management occupations in trades, transportation, production and "
+                                        + "utilities"),
                         Map.entry(5, "Professional occupations in finance"),
                         Map.entry(6, "Professional occupations in business"),
-                        Map.entry(7, "Administrative and financial supervisors and specialized administrative occupations"),
+                        Map.entry(7, "Administrative and financial supervisors and specialized administrative "
+                                        + "occupations"),
                         Map.entry(8, "Administrative occupations and transportation logistics occupations"),
                         Map.entry(9, "Administrative and financial support and supply chain logistics occupations"),
                         Map.entry(10, "Professional occupations in natural sciences"),
@@ -44,7 +47,8 @@ public class HousingServiceImpl implements HousingService {
                         Map.entry(21, "Professional occupations in social and community services"),
                         Map.entry(22, "Professional occupations in government services"),
                         Map.entry(23, "Occupations in front-line public protection services"),
-                        Map.entry(24, "Paraprofessional occupations in legal, social, community and education services"),
+                        Map.entry(24, "Paraprofessional occupations in legal, social, community and education "
+                                        + "services"),
                         Map.entry(25, "Assisting occupations in education and in legal and public protection"),
                         Map.entry(26, "Care providers and public protection support occupations and "
                                         + "student monitors, crossing guards and related occupations"),
