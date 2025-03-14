@@ -140,7 +140,7 @@ public class HousingServiceImpl implements HousingService {
                 return OCCUPATION_MAP.getOrDefault(noc43, "Unknown Occupation");
         }
 
-        private String getFamilyType(Integer efamtype) {
+        private String getFamilyTypes(Integer efamtype) {
                 return FAMILY_TYPE_MAP.getOrDefault(efamtype, "Unknown Family Type");
         }
 }
