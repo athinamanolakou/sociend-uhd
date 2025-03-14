@@ -332,6 +332,10 @@ public class LabourMarket {
         return noc43;
     }
 
+    public Integer getEfamtype() {
+        return eFamType;
+    }
+
     public Integer getCity() {
         return cma;
     }
