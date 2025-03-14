@@ -57,6 +57,6 @@ public class HousingController {
      */
     @GetMapping("/labour-market/family-type")
     public List<Map<String, Object>> getLabourMarketFamilyType() {
-        return housingService.getLabourMarketFamilyType();
+        return housingService.getLabourMarketFamilyTypes();
     }
 }

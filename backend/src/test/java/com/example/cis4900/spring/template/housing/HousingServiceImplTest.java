@@ -5,6 +5,7 @@ import static org.mockito.Mockito.*;
 
 import com.example.cis4900.spring.template.housing.dao.HousingStartsCompletionsDao;
 import com.example.cis4900.spring.template.housing.models.HousingStartsCompletions;
+import com.example.cis4900.spring.template.housing.models.LabourMarket;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
