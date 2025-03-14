@@ -5,8 +5,8 @@ import HousingTotalStartsCompletions from './components/HousingTotalStartsComple
 import ProductPitch from './components/ProductPitch';
 import LabourMarketOccupationsHamilton from './components/LabourMarketOccupationsHamilton';
 import LabourMarketOccupationsToronto from './components/LabourMarketOccupationsToronto';
-import LabourMarketFamilyTypeHamilton from './components/LabourMarketFamilyTypeHamilton';
-import LabourMarketFamilyTypeToronto from './components/LabourMarketFamilyTypeToronto';
+import LabourMarketFamilyTypesHamilton from './components/LabourMarketFamilyTypesHamilton';
+import LabourMarketFamilyTypesToronto from './components/LabourMarketFamilyTypesToronto';
 
 const App: React.FC = () => {
   const [page, setPage] = useState<'pitch' | 'starts' | 'labour'>('pitch');
@@ -27,8 +27,8 @@ const App: React.FC = () => {
         <>
           <LabourMarketOccupationsHamilton />
           <LabourMarketOccupationsToronto />
-          <LabourMarketFamilyTypeHamilton />
-          <LabourMarketFamilyTypeToronto />
+          <LabourMarketFamilyTypesHamilton />
+          <LabourMarketFamilyTypesToronto />
         </>
       )}
     </div>
