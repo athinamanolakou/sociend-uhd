@@ -14,11 +14,15 @@ import java.util.stream.Collectors;
 @Service
 public class HousingServiceImpl implements HousingService {
 
-        @Autowired
-        private HousingStartsCompletionsDao housingDao;
+        private final HousingStartsCompletionsDao housingDao;
+        private final LabourMarketDao labourDao;
 
         @Autowired
-        private LabourMarketDao labourDao;
+        public HousingServiceImpl(HousingStartsCompletionsDao housingDao,
+                                LabourMarketDao labourDao) {
+                this.housingDao = housingDao;
+                this.labourDao = labourDao;
+        }
 
         private static final Map<Integer, String> OCCUPATION_MAP = Map.ofEntries(
                         Map.entry(1, "Legislative and senior management occupations"),
