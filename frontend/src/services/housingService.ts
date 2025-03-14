@@ -96,3 +96,4 @@ export const getLabourMarketFamilyTypes = async (): Promise<{city: string; famil
         return [];
     }
 }
+

@@ -1,6 +1,9 @@
-// housingService.test.ts
 import {getHousingCompletionRatios, getHousingTotalStartsCompletions, getLabourMarketOccupations} from './housingService';
 import fetchMock from 'jest-fetch-mock';
+import { getLabourMarketFamilyTypes } from './housingService';
+
+
+
 
 beforeAll(() => {
   fetchMock.enableMocks();
@@ -72,4 +75,25 @@ it("handles fetch failure for labour market occupation data", async () => {
 
   const data = await getLabourMarketOccupations();
   expect(data).toEqual([]);  // Check that it returns an empty array instead of throwing
+});
+
+it("successfully fetches labour market family types data", async () => {
+  const mockData = [
+    {city: "Hamilton", familyType: "Single Parent", count: 200},
+    {city: "Toronto", familyType: "Couple with Children", count: 350},
+  ];
+  fetchMock.mockResponseOnce(JSON.stringify(mockData));
+
+  const data = await getLabourMarketFamilyTypes();
+  expect(data).toEqual(mockData);
+  expect(fetchMock.mock.calls.length).toEqual(1);
+
+  expect(fetchMock.mock.calls[0][0]).toContain('/labour-market/family-type');
+});
+
+it("handles fetch failure for labour market family types data", async () => {
+  fetchMock.mockReject(new Error('API failure'));
+
+  const data = await getLabourMarketFamilyTypes();
+  expect(data).toEqual([]);  
 });
