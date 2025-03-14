@@ -1,5 +1,5 @@
 import React from 'react';
-import {Pie} from 'react-chartjs-2';
+import { Pie } from 'react-chartjs-2';
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -7,7 +7,7 @@ import {
   ArcElement,
   Title,
   Tooltip,
-  Legend
+  Legend,
 } from 'chart.js';
 
 ChartJS.register(CategoryScale, LinearScale, ArcElement, Title, Tooltip, Legend);
@@ -34,10 +34,15 @@ const familyTypeData: Record<number, string> = {
   18: 'Other families',
 };
 
-// Generate random values for each family type
-const randomValues = Object.keys(familyTypeData).map(
-  () => Math.floor(Math.random() * 100)
-);
+// Secure random number generator function
+const getSecureRandomNumber = (max: number) => {
+  const array = new Uint32Array(1);
+  window.crypto.getRandomValues(array);
+  return array[0] % max; // Ensures the number is within the expected range
+};
+
+// Generate secure random values for each family type
+const randomValues = Object.keys(familyTypeData).map(() => getSecureRandomNumber(100));
 
 // Generate a rainbow color scheme
 const generateRainbowColors = (numColors: number) => {
@@ -66,8 +71,8 @@ const options = {
   responsive: true,
   maintainAspectRatio: false,
   plugins: {
-    legend: {position: 'right' as const},
-    title: {display: true, text: 'Family Type Breakdown - Hamilton'},
+    legend: { position: 'right' as const },
+    title: { display: true, text: 'Family Type Breakdown - Hamilton' },
   },
 };
 
