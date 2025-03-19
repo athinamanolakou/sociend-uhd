@@ -9,6 +9,7 @@ import {
   Tooltip,
   Legend,
 } from 'chart.js';
+import { useTheme } from '../ThemeContext'; // ✅ Import useTheme
 
 ChartJS.register(CategoryScale, LinearScale, ArcElement, Title, Tooltip, Legend);
 
@@ -56,27 +57,35 @@ const generateRainbowColors = (numColors: number) => {
 
 const backgroundColors = generateRainbowColors(Object.keys(familyTypeData).length);
 
-const data = {
-  labels: Object.values(familyTypeData),
-  datasets: [
-    {
-      label: 'Hamilton - Family Type Distribution',
-      data: randomValues,
-      backgroundColor: backgroundColors,
-    },
-  ],
-};
-
-const options = {
-  responsive: true,
-  maintainAspectRatio: false,
-  plugins: {
-    legend: { position: 'right' as const },
-    title: { display: true, text: 'Family Type Breakdown - Hamilton' },
-  },
-};
-
 const FamilyTypeHamilton: React.FC = () => {
+  const { theme } = useTheme(); // ✅ Get current theme
+
+  const data = {
+    labels: Object.values(familyTypeData),
+    datasets: [
+      {
+        label: 'Hamilton - Family Type Distribution',
+        data: randomValues,
+        backgroundColor: backgroundColors,
+      },
+    ],
+  };
+
+  const options = {
+    responsive: true,
+    maintainAspectRatio: false,
+    plugins: {
+      legend: {
+        labels: { color: theme === 'dark' ? '#ffffff' : '#000000' }, // ✅ Legend text color
+      },
+      title: {
+        display: true,
+        text: 'Family Type Breakdown - Hamilton',
+        color: theme === 'dark' ? '#ffffff' : '#000000', // ✅ Graph title color
+      },
+    },
+  };
+
   return (
     <section
       style={{
@@ -84,8 +93,8 @@ const FamilyTypeHamilton: React.FC = () => {
         margin: '0 auto',
         padding: '30px',
         fontFamily: 'Arial, sans-serif',
-        color: '#f4f4f4',
-        backgroundColor: '#1c1c1c',
+        color: theme === 'dark' ? '#f4f4f4' : '#000000',
+        backgroundColor: theme === 'dark' ? '#1c1c1c' : '#ffffff',
         borderRadius: '12px',
         boxShadow: '0 4px 8px rgba(0, 0, 0, 0.2)',
         textAlign: 'center',
@@ -96,7 +105,7 @@ const FamilyTypeHamilton: React.FC = () => {
           textAlign: 'center',
           fontSize: '2.5rem',
           marginBottom: '20px',
-          color: '#FFD700',
+          color: theme === 'dark' ? '#ffffff' : '#000000', // ✅ Title color
         }}
       >
         Family Type Breakdown - Hamilton
@@ -104,7 +113,7 @@ const FamilyTypeHamilton: React.FC = () => {
 
       <div
         style={{
-          backgroundColor: '#2c2c2c',
+          backgroundColor: theme === 'dark' ? '#2c2c2c' : '#f8f8f8',
           padding: '20px',
           borderRadius: '8px',
         }}

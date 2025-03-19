@@ -8,32 +8,33 @@ import LabourMarketOccupationsHamilton from './components/LabourMarketOccupation
 import LabourMarketOccupationsToronto from './components/LabourMarketOccupationsToronto';
 import LabourMarketFamilyTypesHamilton from './components/LabourMarketFamilyTypesHamilton';
 import LabourMarketFamilyTypesToronto from './components/LabourMarketFamilyTypesToronto';
+import { ThemeProvider } from './ThemeContext';
 
 const App: React.FC = () => {
-  const [page, setPage] = useState<'pitch' | 'starts' | 'labour'>('pitch');
-
+  const [page, setPage] = useState<"pitch" | "starts" | "labour">("pitch");
+  
   return (
-    <div className="App">
-      <Navbar setPage={setPage} />
-
-      {page === 'pitch' && <ProductPitch />}
-
-      {page === 'starts' && (
-        <>
-          <HousingCompletionRatio />
-          <HousingtartsCompletionsHamilton />
-          <HousingStartsCompletionsToronto />
-        </>
-      )}
-      {page === 'labour' && (
-        <>
-          <LabourMarketOccupationsHamilton />
-          <LabourMarketOccupationsToronto />
-          <LabourMarketFamilyTypesHamilton />
-          <LabourMarketFamilyTypesToronto />
-        </>
-      )}
-    </div>
+    <ThemeProvider>
+      <div className="App">
+        <Navbar setPage={setPage} />
+        {page === "pitch" && <ProductPitch />}
+        {page === "starts" && (
+          <>
+            <HousingCompletionRatio />
+            <HousingtartsCompletionsHamilton />
+            <HousingStartsCompletionsToronto />
+          </>
+        )}
+        {page === "labour" && (
+          <>
+            <LabourMarketOccupationsHamilton />
+            <LabourMarketOccupationsToronto />
+            <LabourMarketFamilyTypesHamilton />
+            <LabourMarketFamilyTypesToronto />
+          </>
+        )}
+      </div>
+    </ThemeProvider>
   );
 };
 
