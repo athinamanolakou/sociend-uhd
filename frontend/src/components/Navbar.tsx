@@ -1,7 +1,7 @@
 import React from 'react';
 
 interface NavbarProps {
-  setPage: (page: 'pitch' | 'starts' | 'labour') => void;
+  setPage: (page: 'pitch' | 'starts' | 'labour' | 'compare') => void;
 }
 
 const Navbar: React.FC<NavbarProps> = ({ setPage }) => {
@@ -10,6 +10,8 @@ const Navbar: React.FC<NavbarProps> = ({ setPage }) => {
       <button onClick={() => setPage('pitch')}>Product Pitch</button>
       <button onClick={() => setPage('starts')}>Starts & Completions</button>
       <button onClick={() => setPage('labour')}>Labour Market</button>
+      <button onClick={() => setPage('compare')}>Comparing Housing and Labour Data</button>
+
     </nav>
   );
 };

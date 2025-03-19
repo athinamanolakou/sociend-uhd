@@ -8,9 +8,11 @@ import LabourMarketOccupationsHamilton from './components/LabourMarketOccupation
 import LabourMarketOccupationsToronto from './components/LabourMarketOccupationsToronto';
 import LabourMarketFamilyTypesHamilton from './components/LabourMarketFamilyTypesHamilton';
 import LabourMarketFamilyTypesToronto from './components/LabourMarketFamilyTypesToronto';
+import HousingVsImmigration from "./components/HousingVsImmigration";
+
 
 const App: React.FC = () => {
-  const [page, setPage] = useState<'pitch' | 'starts' | 'labour'>('pitch');
+  const [page, setPage] = useState<'pitch' | 'starts' | 'labour' | 'compare'>('pitch');
 
   return (
     <div className="App">
@@ -33,6 +35,15 @@ const App: React.FC = () => {
           <LabourMarketFamilyTypesToronto />
         </>
       )}
+
+      {page === 'compare' && (
+          <>
+              <h1>Comparing Housing and Labour Data</h1>
+              <p>This page compares housing starts with labour market data to analyze housing demand.</p>
+              <HousingVsImmigration />  
+          </>
+      )}
+      
     </div>
   );
 };
