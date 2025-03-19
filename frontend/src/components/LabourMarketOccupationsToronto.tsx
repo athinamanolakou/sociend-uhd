@@ -1,6 +1,7 @@
 import React from 'react';
-import {Bar} from 'react-chartjs-2';
-import {Chart as ChartJS, CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend} from 'chart.js';
+import { Bar } from 'react-chartjs-2';
+import { Chart as ChartJS, CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend } from 'chart.js';
+import { useTheme } from '../ThemeContext'; // ✅ Import useTheme
 
 ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend);
 
@@ -35,69 +36,74 @@ const occupationData = {
   27: 'Professional occupations in art & culture',
   28: 'Technical occupations in art & sport',
   29: 'Occupations in art, culture, and sport',
-  30: 'Support occupations in art & sport'
+  30: 'Support occupations in art & sport',
 };
 
 // Mock random data for Toronto
-const randomValues = Array.from({length: Object.keys(occupationData).length}, () => Math.floor(Math.random() * 100));
-
-const data = {
-  labels: Object.values(occupationData),
-  datasets: [
-    {
-      label: 'Toronto - Occupation Distribution',
-      data: randomValues,
-      backgroundColor: 'rgba(255, 99, 132, 0.6)',
-    }
-  ],
-};
-
-const options = {
-  responsive: true,
-  maintainAspectRatio: false,
-  plugins: {
-    legend: {position: 'top' as const},
-    title: {display: true, text: 'Occupation Breakdown - Toronto'},
-  },
-  scales: {
-    x: {
-      ticks: {
-        autoSkip: false,
-        maxRotation: 30,
-        minRotation: 30,
-        font: {
-          size: 12,
-        },
-      },
-    },
-    y: {beginAtZero: true},
-  },
-};
+const randomValues = Array.from({ length: Object.keys(occupationData).length }, () => Math.floor(Math.random() * 100));
 
 const LabourMarketToronto: React.FC = () => {
+  const { theme } = useTheme(); // ✅ Get current theme
+
+  const data = {
+    labels: Object.values(occupationData),
+    datasets: [
+      {
+        label: 'Toronto - Occupation Distribution',
+        data: randomValues,
+        backgroundColor: 'rgba(255, 99, 132, 0.6)',
+      },
+    ],
+  };
+
+  const options = {
+    responsive: true,
+    maintainAspectRatio: false,
+    plugins: {
+      legend: {
+        labels: { color: theme === 'dark' ? '#ffffff' : '#000000' }, // ✅ Legend text color
+      },
+      title: {
+        display: true,
+        text: 'Occupation Breakdown - Toronto',
+        color: theme === 'dark' ? '#ffffff' : '#000000', // ✅ Graph title color
+      },
+    },
+  };
+
   return (
-    <section style={{
-      maxWidth: '900px',
-      margin: '0 auto',
-      padding: '30px',
-      fontFamily: 'Arial, sans-serif',
-      color: '#f4f4f4',
-      backgroundColor: '#1c1c1c',
-      borderRadius: '12px',
-      boxShadow: '0 4px 8px rgba(0, 0, 0, 0.2)',
-      textAlign: 'center',
-    }}>
-      <h1 style={{
+    <section
+      style={{
+        maxWidth: '900px',
+        margin: '0 auto',
+        padding: '30px',
+        fontFamily: 'Arial, sans-serif',
+        color: theme === 'dark' ? '#f4f4f4' : '#000000',
+        backgroundColor: theme === 'dark' ? '#1c1c1c' : '#ffffff',
+        borderRadius: '12px',
+        boxShadow: '0 4px 8px rgba(0, 0, 0, 0.2)',
         textAlign: 'center',
-        fontSize: '2.5rem',
-        marginBottom: '20px',
-        color: '#FFD700',
-      }}>
+      }}
+    >
+      <h1
+        style={{
+          textAlign: 'center',
+          fontSize: '2.5rem',
+          marginBottom: '20px',
+          color: theme === 'dark' ? '#ffffff' : '#000000', // ✅ Title color
+        }}
+      >
         Occupation Breakdown - Toronto
       </h1>
 
-      <div style={{backgroundColor: '#2c2c2c', padding: '20px', borderRadius: '8px'}}>
-        <div style={{width: '100%', height: '600px', paddingBottom: '50px'}}>
+      <div
+        style={{
+          backgroundColor: theme === 'dark' ? '#2c2c2c' : '#f8f8f8',
+          padding: '20px',
+          borderRadius: '8px',
+        }}
+      >
+        <div style={{ width: '100%', height: '600px', paddingBottom: '50px' }}>
           <Bar data={data} options={options} />
         </div>
       </div>
