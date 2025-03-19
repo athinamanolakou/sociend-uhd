@@ -6,6 +6,7 @@ import com.example.cis4900.spring.template.housing.models.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -147,4 +148,42 @@ public class HousingServiceImpl implements HousingService {
         private String getFamilyTypes(Integer efamtype) {
                 return FAMILY_TYPE_MAP.getOrDefault(efamtype, "Unknown Family Type");
         }
+
+        @Override
+        public List<Map<String, Object>> getImmigrationData() {
+                List<LabourMarket> allData = labourDao.findAllData();
+
+                // Grouping by year, month, city and summing up only immigrants (immig == 1 or 2)
+                Map<Integer, Map<Integer, Map<Integer, Integer>>> groupedData = new HashMap<>();
+
+                for (LabourMarket l : allData) {
+                        if (l.getImmig() == 1 || l.getImmig() == 2) { // 1 and 2 (counting only immigrants)
+                            groupedData
+                                .computeIfAbsent(l.getSurvYear(), y -> new HashMap<>())
+                                .computeIfAbsent(l.getSurvMnth(), m -> new HashMap<>())
+                                .merge(l.getCity(), 1, Integer::sum); //sum immigrants per city
+                        }
+                }
+
+                // Convert grouped data to a list
+                List<Map<String, Object>> result = new ArrayList<>();
+                
+                groupedData.forEach((year, months) -> 
+                        months.forEach((month, cities) -> 
+                                cities.forEach((city, total) -> {
+                                        Map<String, Object> row = new HashMap<>();
+                                        row.put("year", year);
+                                        row.put("month", month);
+                                        row.put("city", city);
+                                        row.put("total_immigrants", total); 
+                                        result.add(row);
+                                })
+                        )
+                );
+
+                return result;
+                
+        }
+
+        
 }

@@ -10,41 +10,41 @@ import LabourMarketFamilyTypesHamilton from './components/LabourMarketFamilyType
 import LabourMarketFamilyTypesToronto from './components/LabourMarketFamilyTypesToronto';
 import HousingVsImmigration from "./components/HousingVsImmigration";
 
+import { ThemeProvider } from './ThemeContext';
+
 
 const App: React.FC = () => {
-  const [page, setPage] = useState<'pitch' | 'starts' | 'labour' | 'compare'>('pitch');
-
+  const [page, setPage] = useState<"pitch" | "starts" | "labour" | "compare">("pitch");
+  
   return (
-    <div className="App">
-      <Navbar setPage={setPage} />
-
-      {page === 'pitch' && <ProductPitch />}
-
-      {page === 'starts' && (
-        <>
-          <HousingCompletionRatio />
-          <HousingtartsCompletionsHamilton />
-          <HousingStartsCompletionsToronto />
-        </>
-      )}
-      {page === 'labour' && (
-        <>
-          <LabourMarketOccupationsHamilton />
-          <LabourMarketOccupationsToronto />
-          <LabourMarketFamilyTypesHamilton />
-          <LabourMarketFamilyTypesToronto />
-        </>
-      )}
-
-      {page === 'compare' && (
+    <ThemeProvider>
+      <div className="App">
+        <Navbar setPage={setPage} />
+        {page === "pitch" && <ProductPitch />}
+        {page === "starts" && (
           <>
-              <h1>Comparing Housing and Labour Data</h1>
-              <p>This page compares housing starts with labour market data to analyze housing demand.</p>
-              <HousingVsImmigration />  
+            <HousingCompletionRatio />
+            <HousingtartsCompletionsHamilton />
+            <HousingStartsCompletionsToronto />
           </>
-      )}
-      
-    </div>
+        )}
+        {page === "labour" && (
+          <>
+            <LabourMarketOccupationsHamilton />
+            <LabourMarketOccupationsToronto />
+            <LabourMarketFamilyTypesHamilton />
+            <LabourMarketFamilyTypesToronto />
+          </>
+        )}
+
+        {page === "compare" && (
+          <>
+            <HousingVsImmigration />  
+          </>
+        )}
+
+      </div>
+    </ThemeProvider>
   );
 };
 

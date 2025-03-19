@@ -12,4 +12,6 @@ public interface HousingService {
     List<Map<String, Object>> getLabourMarketOccupations();
 
     List<Map<String, Object>> getLabourMarketFamilyTypes();
+
+    List<Map<String, Object>> getImmigrationData();
 }
