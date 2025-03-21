@@ -7,6 +7,7 @@ const ProductPitch: React.FC = () => {
 
   return (
     <section
+      data-testid="product-pitch" // ✅ Added data-testid
       style={{
         maxWidth: "900px",
         margin: "0 auto",

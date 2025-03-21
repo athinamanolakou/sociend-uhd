@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from "react";
-import { Bar } from "react-chartjs-2";
+import React, {useEffect, useState} from "react";
+import {Bar} from "react-chartjs-2";
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -9,12 +9,12 @@ import {
   Tooltip,
   Legend,
 } from "chart.js";
-import { useTheme } from "../ThemeContext";  // ✅ Import useTheme
+import {useTheme} from "../ThemeContext"; // Import your custom useTheme hook
 
 ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend);
 
 const HousingStartsHamilton: React.FC = () => {
-  const { theme } = useTheme(); // ✅ Get theme from context
+  const {theme} = useTheme(); // Access the current theme from your ThemeContext
 
   interface ChartData {
     labels: string[];
@@ -27,19 +27,22 @@ const HousingStartsHamilton: React.FC = () => {
 
   const [chartData, setChartData] = useState<ChartData | null>(null);
 
+  // Mock data for demonstration
   const mockData = [
-    { city: "Hamilton", year: 2023, month: 1, totalStarts: 100, totalCompletions: 80 },
-    { city: "Hamilton", year: 2023, month: 2, totalStarts: 120, totalCompletions: 90 },
-    { city: "Hamilton", year: 2023, month: 3, totalStarts: 110, totalCompletions: 95 },
-    { city: "Hamilton", year: 2023, month: 4, totalStarts: 130, totalCompletions: 100 },
-    { city: "Hamilton", year: 2023, month: 5, totalStarts: 115, totalCompletions: 105 },
-    { city: "Hamilton", year: 2023, month: 6, totalStarts: 125, totalCompletions: 110 },
+    {city: "Hamilton", year: 2023, month: 1, totalStarts: 100, totalCompletions: 80},
+    {city: "Hamilton", year: 2023, month: 2, totalStarts: 120, totalCompletions: 90},
+    {city: "Hamilton", year: 2023, month: 3, totalStarts: 110, totalCompletions: 95},
+    {city: "Hamilton", year: 2023, month: 4, totalStarts: 130, totalCompletions: 100},
+    {city: "Hamilton", year: 2023, month: 5, totalStarts: 115, totalCompletions: 105},
+    {city: "Hamilton", year: 2023, month: 6, totalStarts: 125, totalCompletions: 110},
   ];
 
   useEffect(() => {
-    const timeLabels = mockData.map(entry => `${entry.year}-${String(entry.month).padStart(2, "0")}`);
-    const starts = mockData.map(entry => entry.totalStarts);
-    const completions = mockData.map(entry => entry.totalCompletions);
+    const timeLabels = mockData.map(
+      (entry) => `${entry.year}-${String(entry.month).padStart(2, "0")}`
+    );
+    const starts = mockData.map((entry) => entry.totalStarts);
+    const completions = mockData.map((entry) => entry.totalCompletions);
 
     setChartData({
       labels: timeLabels,
@@ -60,6 +63,7 @@ const HousingStartsHamilton: React.FC = () => {
 
   return (
     <section
+      data-testid="housing-starts-hamilton" // <-- Added for testing
       style={{
         maxWidth: "900px",
         margin: "0 auto",
@@ -77,7 +81,7 @@ const HousingStartsHamilton: React.FC = () => {
           textAlign: "center",
           fontSize: "2.5rem",
           marginBottom: "20px",
-          color: theme === "dark" ? "#ffffff" : "#000000", // ✅ Change title color based on theme
+          color: theme === "dark" ? "#ffffff" : "#000000",
         }}
       >
         Housing Starts and Completions - Hamilton
@@ -97,19 +101,27 @@ const HousingStartsHamilton: React.FC = () => {
               responsive: true,
               maintainAspectRatio: false,
               plugins: {
-                legend: { labels: { color: theme === "dark" ? "#ffffff" : "#000000" } }, // ✅ Legend color
+                legend: {
+                  labels: {
+                    color: theme === "dark" ? "#ffffff" : "#000000",
+                  },
+                },
                 title: {
                   display: true,
                   text: "Housing Starts and Completions - Hamilton",
-                  color: theme === "dark" ? "#ffffff" : "#000000", // ✅ Change graph title
+                  color: theme === "dark" ? "#ffffff" : "#000000",
                 },
               },
               scales: {
                 x: {
-                  ticks: { color: theme === "dark" ? "#ffffff" : "#000000" }, // ✅ X-axis label color
+                  ticks: {
+                    color: theme === "dark" ? "#ffffff" : "#000000",
+                  },
                 },
                 y: {
-                  ticks: { color: theme === "dark" ? "#ffffff" : "#000000" }, // ✅ Y-axis label color
+                  ticks: {
+                    color: theme === "dark" ? "#ffffff" : "#000000",
+                  },
                 },
               },
             }}

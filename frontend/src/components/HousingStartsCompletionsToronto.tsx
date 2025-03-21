@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from "react";
-import { Bar } from "react-chartjs-2";
+import React, {useEffect, useState} from "react";
+import {Bar} from "react-chartjs-2";
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -9,12 +9,12 @@ import {
   Tooltip,
   Legend,
 } from "chart.js";
-import { useTheme } from "../ThemeContext";  // ✅ Import useTheme
+import {useTheme} from "../ThemeContext";  // ✅ Import useTheme
 
 ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend);
 
 const HousingStartsToronto: React.FC = () => {
-  const { theme } = useTheme(); // ✅ Get theme from context
+  const {theme} = useTheme(); // ✅ Get theme from context
 
   interface ChartData {
     labels: string[];
@@ -28,18 +28,20 @@ const HousingStartsToronto: React.FC = () => {
   const [chartData, setChartData] = useState<ChartData | null>(null);
 
   const mockData = [
-    { city: "Toronto", year: 2023, month: 1, totalStarts: 150, totalCompletions: 120 },
-    { city: "Toronto", year: 2023, month: 2, totalStarts: 160, totalCompletions: 130 },
-    { city: "Toronto", year: 2023, month: 3, totalStarts: 155, totalCompletions: 140 },
-    { city: "Toronto", year: 2023, month: 4, totalStarts: 170, totalCompletions: 145 },
-    { city: "Toronto", year: 2023, month: 5, totalStarts: 165, totalCompletions: 150 },
-    { city: "Toronto", year: 2023, month: 6, totalStarts: 175, totalCompletions: 155 },
+    {city: "Toronto", year: 2023, month: 1, totalStarts: 150, totalCompletions: 120},
+    {city: "Toronto", year: 2023, month: 2, totalStarts: 160, totalCompletions: 130},
+    {city: "Toronto", year: 2023, month: 3, totalStarts: 155, totalCompletions: 140},
+    {city: "Toronto", year: 2023, month: 4, totalStarts: 170, totalCompletions: 145},
+    {city: "Toronto", year: 2023, month: 5, totalStarts: 165, totalCompletions: 150},
+    {city: "Toronto", year: 2023, month: 6, totalStarts: 175, totalCompletions: 155},
   ];
 
   useEffect(() => {
-    const timeLabels = mockData.map(entry => `${entry.year}-${String(entry.month).padStart(2, "0")}`);
-    const starts = mockData.map(entry => entry.totalStarts);
-    const completions = mockData.map(entry => entry.totalCompletions);
+    const timeLabels = mockData.map(
+      (entry) => `${entry.year}-${String(entry.month).padStart(2, "0")}`
+    );
+    const starts = mockData.map((entry) => entry.totalStarts);
+    const completions = mockData.map((entry) => entry.totalCompletions);
 
     setChartData({
       labels: timeLabels,
@@ -60,6 +62,7 @@ const HousingStartsToronto: React.FC = () => {
 
   return (
     <section
+      data-testid="housing-starts-toronto" // <-- Added for testing
       style={{
         maxWidth: "900px",
         margin: "0 auto",
@@ -97,19 +100,27 @@ const HousingStartsToronto: React.FC = () => {
               responsive: true,
               maintainAspectRatio: false,
               plugins: {
-                legend: { labels: { color: theme === "dark" ? "#ffffff" : "#000000" } }, // ✅ Legend color
+                legend: {
+                  labels: {
+                    color: theme === "dark" ? "#ffffff" : "#000000",
+                  },
+                },
                 title: {
                   display: true,
                   text: "Housing Starts and Completions - Toronto",
-                  color: theme === "dark" ? "#ffffff" : "#000000", // ✅ Change graph title
+                  color: theme === "dark" ? "#ffffff" : "#000000",
                 },
               },
               scales: {
                 x: {
-                  ticks: { color: theme === "dark" ? "#ffffff" : "#000000" }, // ✅ X-axis label color
+                  ticks: {
+                    color: theme === "dark" ? "#ffffff" : "#000000",
+                  },
                 },
                 y: {
-                  ticks: { color: theme === "dark" ? "#ffffff" : "#000000" }, // ✅ Y-axis label color
+                  ticks: {
+                    color: theme === "dark" ? "#ffffff" : "#000000",
+                  },
                 },
               },
             }}
