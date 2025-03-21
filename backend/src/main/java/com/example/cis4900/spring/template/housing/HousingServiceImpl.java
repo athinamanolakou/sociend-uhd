@@ -113,7 +113,7 @@ public class HousingServiceImpl implements HousingService {
                         result.put("ratio", ratio);
 
                         return result;
-                }).collect(Collectors.toList());
+                }).toList();
         }
 
         @Override
@@ -126,7 +126,7 @@ public class HousingServiceImpl implements HousingService {
                         result.put("occupation", getOccupationName(l.getNoc43()));
 
                         return result;
-                }).collect(Collectors.toList());
+                }).toList();
         }
 
         @Override
@@ -139,7 +139,7 @@ public class HousingServiceImpl implements HousingService {
                         result.put("familyType", getFamilyTypes(l.getEfamtype()));
 
                         return result;
-                }).collect(Collectors.toList());
+                }).toList();
         }
 
         private String getOccupationName(Integer noc43) {
