@@ -339,4 +339,17 @@ public class LabourMarket {
     public Integer getCity() {
         return cma;
     }
+
+    public Integer getSurvYear() {
+        return survYear; 
+    }
+
+    public Integer getSurvMnth() {
+        return survMnth; 
+    }
+
+    public int getImmig() {
+        return immig;
+    }
+    
 }

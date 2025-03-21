@@ -8,10 +8,13 @@ import LabourMarketOccupationsHamilton from './components/LabourMarketOccupation
 import LabourMarketOccupationsToronto from './components/LabourMarketOccupationsToronto';
 import LabourMarketFamilyTypesHamilton from './components/LabourMarketFamilyTypesHamilton';
 import LabourMarketFamilyTypesToronto from './components/LabourMarketFamilyTypesToronto';
+import HousingVsImmigration from "./components/HousingVsImmigration";
+
 import { ThemeProvider } from './ThemeContext';
 
+
 const App: React.FC = () => {
-  const [page, setPage] = useState<"pitch" | "starts" | "labour">("pitch");
+  const [page, setPage] = useState<"pitch" | "starts" | "labour" | "compare">("pitch");
   
   return (
     <ThemeProvider>
@@ -33,6 +36,13 @@ const App: React.FC = () => {
             <LabourMarketFamilyTypesToronto />
           </>
         )}
+
+        {page === "compare" && (
+          <>
+            <HousingVsImmigration />  
+          </>
+        )}
+
       </div>
     </ThemeProvider>
   );

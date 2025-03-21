@@ -59,4 +59,15 @@ public class HousingController {
     public List<Map<String, Object>> getLabourMarketFamilyTypes() {
         return housingService.getLabourMarketFamilyTypes();
     }
+
+
+    /**
+    * Retrieves immigration data from the `labour_market` table.
+    */
+    @GetMapping("/labour-market/immigration-data")
+    public List<Map<String, Object>> getImmigrationData() {
+        return housingService.getImmigrationData();
+    }
+
+    
 }
