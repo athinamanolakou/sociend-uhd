@@ -7,7 +7,7 @@ import org.junit.jupiter.api.Test;
 import java.sql.Timestamp;
 
 
-public class LabourMarketTest {
+class LabourMarketTest {
     
     private LabourMarket labour;
 

@@ -93,7 +93,8 @@ public class HousingServiceImpl implements HousingService {
                         result.put("totalStarts", h.getTotalStarts());
                         result.put("totalCompletions", h.getTotalComplete());
                         return result;
-                }).collect(Collectors.toList());
+                }).toList(); // Replaced collect(Collectors.toList()) with toList()
+
         }
 
         @Override
