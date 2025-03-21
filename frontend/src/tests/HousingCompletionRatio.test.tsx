@@ -1,7 +1,7 @@
 import React from "react";
 import {render, screen} from "@testing-library/react";
 import "@testing-library/jest-dom"; // Needed for toHaveStyle, etc.
-import {ThemeProvider} from "../ThemeContext";
+import {ThemeContext} from "../ThemeContext"; // Import ThemeContext instead of ThemeProvider
 import HousingCompletionRatio from "../components/HousingCompletionRatio";
 
 /**
@@ -22,9 +22,9 @@ describe("HousingCompletionRatio Component", () => {
   it("renders the chart container and updates theme context without crashing", () => {
     // Render with a mock 'light' theme
     const {rerender} = render(
-      <ThemeProvider value={{theme: "light"}}>
+      <ThemeContext.Provider value={{theme: "light", toggleTheme: jest.fn()}}>
         <HousingCompletionRatio />
-      </ThemeProvider>
+      </ThemeContext.Provider>
     );
 
     // Check that the main container is in the DOM
@@ -36,17 +36,17 @@ describe("HousingCompletionRatio Component", () => {
 
     // Re-render with a 'dark' theme
     rerender(
-      <ThemeProvider value={{theme: "dark"}}>
+      <ThemeContext.Provider value={{theme: "dark", toggleTheme: jest.fn()}}>
         <HousingCompletionRatio />
-      </ThemeProvider>
+      </ThemeContext.Provider>
     );
 
     // Container should still be present
     expect(screen.getByTestId("housing-completion-ratio")).toBeInTheDocument();
-    // The chart should render as well
 
     // If you want to test actual style changes, you must mock the CSS variables:
     document.documentElement.style.setProperty("--background-color", "#1c1c1c");
+
     // Then check (keeping in mind jsdom doesn't fully compute var() expressions)
     expect(container).toHaveStyle("background-color: var(--background-color)");
   });

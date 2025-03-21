@@ -14,19 +14,31 @@ beforeAll(() => {
   // @ts-ignore
   global.ResizeObserver = ResizeObserver;
 
-  // 2) Mock 'window.crypto.getRandomValues'
+  // 2) Mock 'window.crypto.getRandomValues' with a generic signature
   if (!window.crypto) {
     // @ts-ignore
     window.crypto = {};
   }
-  if (!window.crypto.getRandomValues) {
-    window.crypto.getRandomValues = (array: Uint32Array) => {
-      for (let i = 0; i < array.length; i++) {
-        array[i] = Math.floor(Math.random() * 2 ** 32);
-      }
+
+  // if (!window.crypto.getRandomValues) {
+  window.crypto.getRandomValues = <T extends ArrayBufferView | null>(array: T): T => {
+    if (array === null) {
       return array;
-    };
-  }
+    }
+
+    // Convert the provided ArrayBufferView into a Uint8Array,
+    // using the same underlying buffer, offset, and length in bytes
+    const typedArray = new Uint8Array(array.buffer, array.byteOffset, array.byteLength);
+
+    // Randomize each byte
+    for (let i = 0; i < typedArray.length; i++) {
+      typedArray[i] = Math.floor(Math.random() * 256);
+    }
+
+    // Return the original array (still referencing the same buffer)
+    return array;
+  };
+
 });
 
 describe("LabourMarketFamilyTypesHamilton", () => {
