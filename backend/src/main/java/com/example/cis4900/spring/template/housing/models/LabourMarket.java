@@ -69,7 +69,7 @@ public class LabourMarket {
     @Column(name = "HRLYEARN")
     private Float hrlyEarn;
 
-    @Column(name = "UNION", nullable = false)
+    @Column(name = "`UNION`", nullable = false)
     private Integer unionStatus;
 
     @Column(name = "PERMTEMP", nullable = false)
@@ -96,8 +96,8 @@ public class LabourMarket {
     @Column(name = "FINALWT")
     private Float finalWt;
 
-    @Column(name = "last_updated", insertable = false, updatable = false, 
-            columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP")
+    @Column(name = "last_updated", insertable = false, updatable = false, columnDefinition = "TIMESTAMP DEFAULT "
+            + "CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP")
     private Timestamp lastUpdated;
 
     // Default constructor required by JPA
@@ -341,15 +341,15 @@ public class LabourMarket {
     }
 
     public Integer getSurvYear() {
-        return survYear; 
+        return survYear;
     }
 
     public Integer getSurvMnth() {
-        return survMnth; 
+        return survMnth;
     }
 
     public int getImmig() {
         return immig;
     }
-    
+
 }
