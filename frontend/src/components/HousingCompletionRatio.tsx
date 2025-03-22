@@ -111,7 +111,7 @@ const HousingCompletionRatio: React.FC = () => {
           color: theme === "dark" ? "#ffffff" : "#000000",
         }}
       >
-        Housing Completion Rate (Hamilton vs Toronto) - Monthly
+        Housing Completion Rate (Hamilton vs Toronto)
       </h1>
 
       <div

@@ -47,12 +47,12 @@ const HousingStartsToronto: React.FC = () => {
       labels: timeLabels,
       datasets: [
         {
-          label: "Toronto - Total Starts",
+          label: "Total Starts (Toronto)",
           data: starts,
           backgroundColor: "rgba(0, 200, 0, 0.6)",
         },
         {
-          label: "Toronto - Total Completions",
+          label: "Total Completions (Toronto)",
           data: completions,
           backgroundColor: "rgba(0, 200, 0, 1)",
         },
@@ -83,7 +83,7 @@ const HousingStartsToronto: React.FC = () => {
           color: theme === "dark" ? "#ffffff" : "#000000", // ✅ Change title color based on theme
         }}
       >
-        Housing Starts and Completions - Toronto
+        Housing Starts and Completions (Toronto)
       </h1>
 
       <div
@@ -107,7 +107,7 @@ const HousingStartsToronto: React.FC = () => {
                 },
                 title: {
                   display: true,
-                  text: "Housing Starts and Completions - Toronto",
+                  text: "Housing Starts and Completions (Toronto)",
                   color: theme === "dark" ? "#ffffff" : "#000000",
                 },
               },

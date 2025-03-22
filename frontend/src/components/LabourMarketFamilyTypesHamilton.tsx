@@ -67,7 +67,7 @@ const FamilyTypeHamilton: React.FC = () => {
     labels: Object.values(familyTypeData),
     datasets: [
       {
-        label: "Hamilton - Family Type Distribution",
+        label: "Family Type Distribution (Hamilton)",
         data: randomValues,
         backgroundColor: backgroundColors,
       },
@@ -85,7 +85,7 @@ const FamilyTypeHamilton: React.FC = () => {
       },
       title: {
         display: true,
-        text: "Family Type Breakdown - Hamilton",
+        text: "Family Type Breakdown (Hamilton)",
         color: theme === "dark" ? "#ffffff" : "#000000",
       },
     },
@@ -114,7 +114,7 @@ const FamilyTypeHamilton: React.FC = () => {
           color: theme === "dark" ? "#ffffff" : "#000000",
         }}
       >
-        Family Type Breakdown - Hamilton
+        Family Type Breakdown (Hamilton)
       </h1>
 
       <div

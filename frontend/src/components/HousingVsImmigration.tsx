@@ -10,39 +10,55 @@ import {
     Tooltip,
     Legend,
 } from "chart.js";
-import {useTheme} from "../ThemeContext"; // same pattern as your other files
+import {useTheme} from "../ThemeContext";
 
 ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend);
 
 interface DataEntry {
+    city: string;
     year: number;
     month: number;
     totalStarts?: number;
     total_immigrants?: number;
 }
 
+// Mock data for demonstration: Hamilton and Toronto in the same arrays
+const mockHousingData: DataEntry[] = [
+    // Hamilton Housing
+    {city: "Hamilton", year: 2020, month: 1, totalStarts: 120},
+    {city: "Hamilton", year: 2020, month: 2, totalStarts: 135},
+    {city: "Hamilton", year: 2020, month: 3, totalStarts: 150},
+    {city: "Hamilton", year: 2020, month: 4, totalStarts: 165},
+    {city: "Hamilton", year: 2020, month: 5, totalStarts: 180},
+    // Toronto Housing
+    {city: "Toronto", year: 2020, month: 1, totalStarts: 100},
+    {city: "Toronto", year: 2020, month: 2, totalStarts: 115},
+    {city: "Toronto", year: 2020, month: 3, totalStarts: 125},
+    {city: "Toronto", year: 2020, month: 4, totalStarts: 140},
+    {city: "Toronto", year: 2020, month: 5, totalStarts: 160},
+];
+
+const mockImmigrationData: DataEntry[] = [
+    // Hamilton Immigration
+    {city: "Hamilton", year: 2020, month: 1, total_immigrants: 80},
+    {city: "Hamilton", year: 2020, month: 2, total_immigrants: 95},
+    {city: "Hamilton", year: 2020, month: 3, total_immigrants: 110},
+    {city: "Hamilton", year: 2020, month: 4, total_immigrants: 125},
+    {city: "Hamilton", year: 2020, month: 5, total_immigrants: 140},
+    // Toronto Immigration
+    {city: "Toronto", year: 2020, month: 1, total_immigrants: 70},
+    {city: "Toronto", year: 2020, month: 2, total_immigrants: 90},
+    {city: "Toronto", year: 2020, month: 3, total_immigrants: 100},
+    {city: "Toronto", year: 2020, month: 4, total_immigrants: 115},
+    {city: "Toronto", year: 2020, month: 5, total_immigrants: 130},
+];
+
 const HousingVsImmigration: React.FC = () => {
-    const {theme} = useTheme(); // Dark/Light theme
+    const {theme} = useTheme(); // Dark/Light theme from your context
     const [chartData, setChartData] = useState<any>(null);
 
-    // Mock data for demonstration
-    const mockHousingData: DataEntry[] = [
-        {year: 2020, month: 1, totalStarts: 488},
-        {year: 2020, month: 2, totalStarts: 435},
-        {year: 2020, month: 3, totalStarts: 254},
-        {year: 2020, month: 4, totalStarts: 165},
-        {year: 2020, month: 5, totalStarts: 78},
-    ];
-    const mockImmigrationData: DataEntry[] = [
-        {year: 2020, month: 1, total_immigrants: 1242},
-        {year: 2020, month: 2, total_immigrants: 1343},
-        {year: 2020, month: 3, total_immigrants: 1532},
-        {year: 2020, month: 4, total_immigrants: 2345},
-        {year: 2020, month: 5, total_immigrants: 3456},
-    ];
-
     useEffect(() => {
-        // 1) Gather all possible months (YYYY-MM) from both data sets
+        // Gather all possible YYYY-MM labels from both data sets
         const allMonths = [
             ...new Set(
                 [...mockHousingData, ...mockImmigrationData].map(
@@ -51,30 +67,43 @@ const HousingVsImmigration: React.FC = () => {
             ),
         ].sort();
 
-        // 2) For each month, find housing starts and immigrants, then compute ratio
-        const ratioData = allMonths.map((label) => {
+        // Helper: Get the ratio of (housingStarts * 5) / immigrants for a city in a given month
+        const getRatioForMonth = (city: string, label: string) => {
+            // Find housing starts for that city & label
             const foundHousing = mockHousingData.find(
-                (d) => `${d.year}-${String(d.month).padStart(2, "0")}` === label
-            );
-            const foundImmigration = mockImmigrationData.find(
-                (d) => `${d.year}-${String(d.month).padStart(2, "0")}` === label
+                (d) => d.city === city && `${d.year}-${String(d.month).padStart(2, "0")}` === label
             );
             const housing = foundHousing?.totalStarts ?? 0;
-            const immigrants = foundImmigration?.total_immigrants ?? 0;
 
-            // Houses built per 5 immigrants
+            // Find immigration for that city & label
+            const foundImm = mockImmigrationData.find(
+                (d) => d.city === city && `${d.year}-${String(d.month).padStart(2, "0")}` === label
+            );
+            const immigrants = foundImm?.total_immigrants ?? 0;
+
             return immigrants === 0 ? 0 : (housing * 5) / immigrants;
-        });
+        };
 
-        // 3) Construct the chart data with one dataset
+        // Build ratio arrays for Hamilton and Toronto
+        const hamiltonRatios = allMonths.map((label) => getRatioForMonth("Hamilton", label));
+        const torontoRatios = allMonths.map((label) => getRatioForMonth("Toronto", label));
+
+        // Construct chart data with 2 lines
         setChartData({
             labels: allMonths,
             datasets: [
                 {
-                    label: "Houses Built per 5 Immigrants",
-                    data: ratioData,
+                    label: "Hamilton",
+                    data: hamiltonRatios,
                     borderColor: "rgba(0, 123, 255, 1)",
                     backgroundColor: "rgba(0, 123, 255, 0.2)",
+                    tension: 0.2,
+                },
+                {
+                    label: "Toronto",
+                    data: torontoRatios,
+                    borderColor: "rgba(40, 167, 69, 1)",
+                    backgroundColor: "rgba(40, 167, 69, 0.2)",
                     tension: 0.2,
                 },
             ],
@@ -103,7 +132,7 @@ const HousingVsImmigration: React.FC = () => {
                     color: theme === "dark" ? "#ffffff" : "#000000",
                 }}
             >
-                Houses Built per 5 Immigrants - Toronto
+                Houses Built per 5 Immigrants (Hamilton vs Toronto)
             </h1>
 
             <div

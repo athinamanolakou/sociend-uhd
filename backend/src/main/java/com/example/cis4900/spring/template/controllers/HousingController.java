@@ -1,7 +1,6 @@
 package com.example.cis4900.spring.template.controllers;
 
 import com.example.cis4900.spring.template.housing.HousingService;
-//import com.example.cis4900.spring.template.housing.models.HousingStartsCompletions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -17,14 +16,6 @@ public class HousingController {
     public HousingController(HousingService housingService) {
         this.housingService = housingService;
     }
-
-    /**
-     * Retrieves all data from the `housing_starts_completions` table.
-     */
-    // @GetMapping("/starts-completions/all")
-    // public List<HousingStartsCompletions> getAllHousingStartsCompletions() {
-    // return housingService.getAllHousingStartsCompletions();
-    // }
 
     /**
      * Retrieves total starts and completions data from the

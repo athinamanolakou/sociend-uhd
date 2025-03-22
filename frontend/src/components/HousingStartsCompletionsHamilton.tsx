@@ -48,12 +48,12 @@ const HousingStartsHamilton: React.FC = () => {
       labels: timeLabels,
       datasets: [
         {
-          label: "Hamilton - Total Starts",
+          label: "Total Starts (Hamilton)",
           data: starts,
           backgroundColor: "rgba(0, 123, 255, 0.6)",
         },
         {
-          label: "Hamilton - Total Completions",
+          label: "Total Completions (Hamilton)",
           data: completions,
           backgroundColor: "rgba(0, 123, 255, 1)",
         },
@@ -84,7 +84,7 @@ const HousingStartsHamilton: React.FC = () => {
           color: theme === "dark" ? "#ffffff" : "#000000",
         }}
       >
-        Housing Starts and Completions - Hamilton
+        Housing Starts and Completions (Hamilton)
       </h1>
 
       <div
@@ -108,7 +108,7 @@ const HousingStartsHamilton: React.FC = () => {
                 },
                 title: {
                   display: true,
-                  text: "Housing Starts and Completions - Hamilton",
+                  text: "Housing Starts and Completions (Hamilton)",
                   color: theme === "dark" ? "#ffffff" : "#000000",
                 },
               },

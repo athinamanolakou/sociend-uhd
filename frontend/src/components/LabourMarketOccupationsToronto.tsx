@@ -60,7 +60,7 @@ const LabourMarketToronto: React.FC = () => {
     labels: Object.values(occupationData),
     datasets: [
       {
-        label: "Toronto - Occupation Distribution",
+        label: "Occupation Distribution (Toronto)",
         data: randomValues,
         backgroundColor: "rgba(255, 99, 132, 0.6)",
       },
@@ -78,7 +78,7 @@ const LabourMarketToronto: React.FC = () => {
       },
       title: {
         display: true,
-        text: "Occupation Breakdown - Toronto",
+        text: "Occupation Breakdown (Toronto)",
         color: theme === "dark" ? "#ffffff" : "#000000",
       },
     },
@@ -107,7 +107,7 @@ const LabourMarketToronto: React.FC = () => {
           color: theme === "dark" ? "#ffffff" : "#000000",
         }}
       >
-        Occupation Breakdown - Toronto
+        Occupation Breakdown (Toronto)
       </h1>
 
       <div

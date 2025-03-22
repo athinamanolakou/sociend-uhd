@@ -1,25 +1,4 @@
-//import {HousingStartsCompletions} from '../types/Housing';
-
 const API_URL = '/api/housing';
-
-///**
-// * Fetch all housing starts and completions data.
-// */
-//export const getAllHousingStartsCompletions = async (): Promise<HousingStartsCompletions[]> => {
-//    console.log('Fetching all housing starts and completions from:', `${API_URL}/starts-completions/all`);
-//    try {
-//        const response = await fetch(`${API_URL}/starts-completions/all`);
-//        if (!response.ok) {
-//            throw new Error(`HTTP error! Status: ${response.status}`);
-//        }
-//        const data: HousingStartsCompletions[] = await response.json();
-//        console.log('API response:', data);
-//        return data;
-//    } catch (error) {
-//        console.error('Error fetching housing data:', error);
-//        return [];
-//    }
-//};
 
 /**
  * Fetch housing completion ratios from the backend.
@@ -93,6 +72,25 @@ export const getLabourMarketFamilyTypes = async (): Promise<{city: string; famil
         return data;
     } catch (error) {
         console.error('Error fetching labour market family types:', error);
+        return [];
+    }
+}
+
+/**
+ * Fetch labour market immigration data from the backend.
+ */
+export const getLabourMarketImmigration = async (): Promise<{city: string; immigrationStatus: string; count: number}[]> => {
+    console.log('Fetching labour market immigration from:', `${API_URL}/labour-market/immigration-data`);
+    try {
+        const response = await fetch(`${API_URL}/labour-market/immigration-data`);
+        if (!response.ok) {
+            throw new Error(`HTTP error! Status: ${response.status}`);
+        }
+        const data = await response.json();
+        console.log('API response:', data);
+        return data;
+    } catch (error) {
+        console.error('Error fetching labour market immigration:', error);
         return [];
     }
 }
