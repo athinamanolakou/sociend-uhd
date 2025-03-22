@@ -92,6 +92,7 @@ const FamilyTypeHamilton: React.FC = () => {
 
   return (
     <section
+      data-testid="family-type-hamilton"
       style={{
         maxWidth: "900px",
         margin: "0 auto",
