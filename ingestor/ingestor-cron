@@ -1,0 +1,1 @@
+0 0 * * * echo "Cron job started" >> /var/log/cron.log 2>&1 && /usr/local/bin/python3 /usr/app/ingestor.py >> /var/log/cron.log 2>&1
