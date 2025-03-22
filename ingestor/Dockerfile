@@ -8,7 +8,7 @@ COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
 # Install Cron
-RUN apt-get update && apt-get -y install cron
+#RUN apt-get update && apt-get -y install cron
 
 # Copy Application
 COPY . /usr/app

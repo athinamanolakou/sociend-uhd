@@ -8,11 +8,15 @@ import LabourMarketOccupationsHamilton from './components/LabourMarketOccupation
 import LabourMarketOccupationsToronto from './components/LabourMarketOccupationsToronto';
 import LabourMarketFamilyTypesHamilton from './components/LabourMarketFamilyTypesHamilton';
 import LabourMarketFamilyTypesToronto from './components/LabourMarketFamilyTypesToronto';
-import { ThemeProvider } from './ThemeContext';
+import HousingVsImmigrationHamilton from "./components/HousingVsImmigrationHamilton";
+import HousingVsImmigrationToronto from "./components/HousingVsImmigrationToronto";
+
+import {ThemeProvider} from './ThemeContext';
+
 
 const App: React.FC = () => {
-  const [page, setPage] = useState<"pitch" | "starts" | "labour">("pitch");
-  
+  const [page, setPage] = useState<"pitch" | "starts" | "occupations" | "family" | "immigration">("pitch");
+
   return (
     <ThemeProvider>
       <div className="App">
@@ -25,14 +29,26 @@ const App: React.FC = () => {
             <HousingStartsCompletionsToronto />
           </>
         )}
-        {page === "labour" && (
+        {page === "occupations" && (
           <>
             <LabourMarketOccupationsHamilton />
             <LabourMarketOccupationsToronto />
+          </>
+        )}
+        {page === "family" && (
+          <>
             <LabourMarketFamilyTypesHamilton />
             <LabourMarketFamilyTypesToronto />
           </>
         )}
+
+        {page === "immigration" && (
+          <>
+            <HousingVsImmigrationHamilton />
+            <HousingVsImmigrationToronto />
+          </>
+        )}
+
       </div>
     </ThemeProvider>
   );

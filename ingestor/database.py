@@ -13,7 +13,7 @@ class Database:
         self.connection = None
 
         # API Config
-        self.API_KEY = "V86Jh-BJ91CjEpRAqkyfhxbcOKLjCs-JXgK6lNvLQblTrE30OtCeug"
+        self.API_KEY = "RSUR_J6bE2NWdpcw8aT-3cHBfmnrZY2x8E4tDeBxMr-pSVi_uTRa8g"
         self.API_URLS = {
             "housing_starts_completions": "https://cis-data-service.socs.uoguelph.ca/data/housing_starts_completions",
             "housing_under_construction": "https://cis-data-service.socs.uoguelph.ca/data/housing_under_construction",
