@@ -42,7 +42,6 @@ const HamiltonImmigration: React.FC = () => {
                 const hamiltonData = allData.filter((entry) => entry.city === "Hamilton");
 
                 if (hamiltonData.length === 0) {
-                    console.warn("No API data for Hamilton, using mock data.");
                     setChartData(formatChartData(fallbackImmigrationData));
                 } else {
                     // **Count Total Existing Immigrants Per (Year, Month)**

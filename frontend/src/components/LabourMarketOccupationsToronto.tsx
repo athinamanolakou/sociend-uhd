@@ -64,7 +64,6 @@ const LabourMarketToronto: React.FC = () => {
         const torontoData = allData.filter((entry) => entry.city === "Toronto");
 
         if (torontoData.length === 0) {
-          console.warn("No API data for Toronto occupations, using fallback data.");
           setOccupationCounts(fallbackOccupationCounts);
         } else {
           // Count occurrences of each occupation

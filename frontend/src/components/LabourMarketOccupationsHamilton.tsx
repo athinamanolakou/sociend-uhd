@@ -64,7 +64,6 @@ const LabourMarketHamilton: React.FC = () => {
         const hamiltonData = allData.filter((entry) => entry.city === "Hamilton");
 
         if (hamiltonData.length === 0) {
-          console.warn("No API data for Hamilton occupations, using fallback data.");
           setOccupationCounts(fallbackOccupationCounts);
         } else {
           // Count occurrences of each occupation

@@ -43,7 +43,6 @@ const TorontoImmigration: React.FC = () => {
                 );
 
                 if (torontoData.length === 0) {
-                    console.warn("No API data for Toronto, using fallback data.");
                     setChartData({
                         labels: fallbackImmigrationData.map(
                             (item) => `${item.year}-${String(item.month).padStart(2, "0")}`
