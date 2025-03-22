@@ -9,61 +9,106 @@ import {
   Tooltip,
   Legend,
 } from "chart.js";
-import {useTheme} from "../ThemeContext"; // Import your custom useTheme hook
+import {useTheme} from "../ThemeContext";
+import {getHousingTotalStartsCompletions} from "../services/housingService";
 
 ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend);
 
+interface ChartData {
+  labels: string[];
+  datasets: {
+    label: string;
+    data: number[];
+    backgroundColor: string;
+  }[];
+}
+
+/** Represents each entry from the API. */
+interface HousingEntry {
+  city: string;
+  year: number;
+  month: number;
+  totalStarts: number;
+  totalCompletions: number;
+}
+
 const HousingStartsHamilton: React.FC = () => {
-  const {theme} = useTheme(); // Access the current theme from your ThemeContext
-
-  interface ChartData {
-    labels: string[];
-    datasets: {
-      label: string;
-      data: number[];
-      backgroundColor: string;
-    }[];
-  }
-
+  const {theme} = useTheme();
   const [chartData, setChartData] = useState<ChartData | null>(null);
-
-  // Mock data for demonstration
-  const mockData = [
-    {city: "Hamilton", year: 2023, month: 1, totalStarts: 100, totalCompletions: 80},
-    {city: "Hamilton", year: 2023, month: 2, totalStarts: 120, totalCompletions: 90},
-    {city: "Hamilton", year: 2023, month: 3, totalStarts: 110, totalCompletions: 95},
-    {city: "Hamilton", year: 2023, month: 4, totalStarts: 130, totalCompletions: 100},
-    {city: "Hamilton", year: 2023, month: 5, totalStarts: 115, totalCompletions: 105},
-    {city: "Hamilton", year: 2023, month: 6, totalStarts: 125, totalCompletions: 110},
-  ];
+  const [loading, setLoading] = useState<boolean>(true);
 
   useEffect(() => {
-    const timeLabels = mockData.map(
-      (entry) => `${entry.year}-${String(entry.month).padStart(2, "0")}`
-    );
-    const starts = mockData.map((entry) => entry.totalStarts);
-    const completions = mockData.map((entry) => entry.totalCompletions);
+    async function fetchHamiltonData() {
+      try {
+        const allData: HousingEntry[] = await getHousingTotalStartsCompletions();
 
-    setChartData({
-      labels: timeLabels,
-      datasets: [
-        {
-          label: "Hamilton - Total Starts",
-          data: starts,
-          backgroundColor: "rgba(0, 123, 255, 0.6)",
-        },
-        {
-          label: "Hamilton - Total Completions",
-          data: completions,
-          backgroundColor: "rgba(0, 123, 255, 1)",
-        },
-      ],
-    });
+        // Filter for city === "Hamilton"
+        const hamiltonData = allData.filter((entry) => entry.city === "Hamilton");
+
+        // Group by (year, month) to avoid duplicates
+        const groupedMap = new Map<string, {year: number; month: number; totalStarts: number; totalCompletions: number}>();
+
+        for (const row of hamiltonData) {
+          const ymKey = `${row.year}-${row.month}`;
+          if (!groupedMap.has(ymKey)) {
+            groupedMap.set(ymKey, {
+              year: row.year,
+              month: row.month,
+              totalStarts: 0,
+              totalCompletions: 0,
+            });
+          }
+          const existing = groupedMap.get(ymKey)!;
+          existing.totalStarts += row.totalStarts;
+          existing.totalCompletions += row.totalCompletions;
+        }
+
+        // Convert map back to an array and sort by (year, month)
+        const groupedArray = Array.from(groupedMap.values());
+        groupedArray.sort((a, b) => {
+          const dateA = a.year * 100 + a.month;
+          const dateB = b.year * 100 + b.month;
+          return dateA - dateB;
+        });
+
+        // Build labels & data arrays
+        const timeLabels = groupedArray.map(
+          (item) => `${item.year}-${String(item.month).padStart(2, "0")}`
+        );
+        const starts = groupedArray.map((item) => item.totalStarts);
+        const completions = groupedArray.map((item) => item.totalCompletions);
+
+        // Construct chart data
+        const newChartData: ChartData = {
+          labels: timeLabels,
+          datasets: [
+            {
+              label: "Total Starts (Hamilton)",
+              data: starts,
+              backgroundColor: "rgba(0, 123, 255, 0.6)",
+            },
+            {
+              label: "Total Completions (Hamilton)",
+              data: completions,
+              backgroundColor: "rgba(0, 123, 255, 1)",
+            },
+          ],
+        };
+
+        setChartData(newChartData);
+      } catch (error) {
+        console.error("Error fetching or processing Hamilton housing data:", error);
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    fetchHamiltonData();
   }, []);
 
   return (
     <section
-      data-testid="housing-starts-hamilton" // <-- Added for testing
+      data-testid="housing-starts-hamilton"
       style={{
         maxWidth: "900px",
         margin: "0 auto",
@@ -84,7 +129,7 @@ const HousingStartsHamilton: React.FC = () => {
           color: theme === "dark" ? "#ffffff" : "#000000",
         }}
       >
-        Housing Starts and Completions - Hamilton
+        Housing Starts and Completions (Hamilton)
       </h1>
 
       <div
@@ -92,9 +137,12 @@ const HousingStartsHamilton: React.FC = () => {
           backgroundColor: theme === "dark" ? "#2c2c2c" : "#f8f8f8",
           padding: "20px",
           borderRadius: "8px",
+          height: "600px",
         }}
       >
-        {chartData ? (
+        {loading ? (
+          <p>Loading chart data...</p>
+        ) : chartData ? (
           <Bar
             data={chartData}
             options={{
@@ -108,7 +156,7 @@ const HousingStartsHamilton: React.FC = () => {
                 },
                 title: {
                   display: true,
-                  text: "Housing Starts and Completions - Hamilton",
+                  text: "Housing Starts and Completions (Hamilton)",
                   color: theme === "dark" ? "#ffffff" : "#000000",
                 },
               },
@@ -127,7 +175,7 @@ const HousingStartsHamilton: React.FC = () => {
             }}
           />
         ) : (
-          <p>Loading chart data...</p>
+          <p>No data available for Hamilton.</p>
         )}
       </div>
     </section>

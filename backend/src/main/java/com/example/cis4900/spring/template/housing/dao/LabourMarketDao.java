@@ -8,6 +8,6 @@ import java.util.List;
 
 public interface LabourMarketDao extends CrudRepository<LabourMarket, Integer> {
 
-    @Query("SELECT h FROM labourMarket h")
+    @Query("SELECT h FROM LabourMarket h")
     List<LabourMarket> findAllData();
 }

@@ -6,7 +6,6 @@ import com.example.cis4900.spring.template.housing.models.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -20,7 +19,7 @@ public class HousingServiceImpl implements HousingService {
 
         @Autowired
         public HousingServiceImpl(HousingStartsCompletionsDao housingDao,
-                                LabourMarketDao labourDao) {
+                        LabourMarketDao labourDao) {
                 this.housingDao = housingDao;
                 this.labourDao = labourDao;
         }
@@ -82,6 +81,11 @@ public class HousingServiceImpl implements HousingService {
                         Map.entry(17, "Lone-parent family, parent not employed, youngest child 18 to 24"),
                         Map.entry(18, "Other families"));
 
+        private static final Map<Integer, String> IMMIGRANT_MAP = Map.ofEntries(
+                        Map.entry(1, "Immigrant"),
+                        Map.entry(2, "Immigrant"),
+                        Map.entry(3, "Non-immigrant"));
+
         @Override
         public List<Map<String, Object>> getHousingTotals() {
                 List<HousingStartsCompletions> allData = housingDao.findAllData();
@@ -142,6 +146,22 @@ public class HousingServiceImpl implements HousingService {
                 }).toList();
         }
 
+        @Override
+        public List<Map<String, Object>> getImmigrationData() {
+                List<LabourMarket> allData = labourDao.findAllData();
+
+                return allData.stream().map(l -> {
+                        Map<String, Object> result = new HashMap<>();
+                        result.put("city", l.getCity());
+                        result.put("year", l.getYear());
+                        result.put("month", l.getMonth());
+                        
+                        result.put("immigrantStatus", getImmigrantType(l.getImmig()));
+
+                        return result;
+                }).collect(Collectors.toList());
+        }
+
         private String getOccupationName(Integer noc43) {
                 return OCCUPATION_MAP.getOrDefault(noc43, "Unknown Occupation");
         }
@@ -150,41 +170,8 @@ public class HousingServiceImpl implements HousingService {
                 return FAMILY_TYPE_MAP.getOrDefault(efamtype, "Unknown Family Type");
         }
 
-        @Override
-        public List<Map<String, Object>> getImmigrationData() {
-                List<LabourMarket> allData = labourDao.findAllData();
-
-                // Grouping by year, month, city and summing up only immigrants (immig == 1 or 2)
-                Map<Integer, Map<Integer, Map<Integer, Integer>>> groupedData = new HashMap<>();
-
-                for (LabourMarket l : allData) {
-                        if (l.getImmig() == 1 || l.getImmig() == 2) { // 1 and 2 (counting only immigrants)
-                            groupedData
-                                .computeIfAbsent(l.getSurvYear(), y -> new HashMap<>())
-                                .computeIfAbsent(l.getSurvMnth(), m -> new HashMap<>())
-                                .merge(l.getCity(), 1, Integer::sum); //sum immigrants per city
-                        }
-                }
-
-                // Convert grouped data to a list
-                List<Map<String, Object>> result = new ArrayList<>();
-                
-                groupedData.forEach((year, months) -> 
-                        months.forEach((month, cities) -> 
-                                cities.forEach((city, total) -> {
-                                        Map<String, Object> row = new HashMap<>();
-                                        row.put("year", year);
-                                        row.put("month", month);
-                                        row.put("city", city);
-                                        row.put("total_immigrants", total); 
-                                        result.add(row);
-                                })
-                        )
-                );
-
-                return result;
-                
+        private String getImmigrantType(Integer immig) {
+                return IMMIGRANT_MAP.getOrDefault(immig, "Unknown Immigrant Status");
         }
 
-        
 }

@@ -1,51 +1,45 @@
-import React, {createContext, useEffect, useState} from "react";
+import React from "react";
+import {render, screen} from "@testing-library/react";
+import "@testing-library/jest-dom";
+import {ThemeContext} from "../ThemeContext";
+import ProductPitch from "../components/ProductPitch";
 
-/** The shape of the data we store in ThemeContext. */
-interface ThemeContextProps {
-  theme: string;
-  toggleTheme: () => void;
-}
+describe("ProductPitch Component", () => {
+  test("renders the component and applies correct styles for light theme", () => {
+    render(
+      <ThemeContext.Provider value={{theme: "light", toggleTheme: jest.fn()}}>
+        <ProductPitch />
+      </ThemeContext.Provider>
+    );
 
-/** Props for our custom ThemeProvider. */
-interface ThemeProviderProps {
-  children: React.ReactNode;
-  /** Allows passing an initial theme in tests or anywhere else. */
-  value?: {
-    theme: string;
-  };
-}
+    const container = screen.getByTestId("product-pitch");
 
-/**
- * Create the ThemeContext with default values.
- */
-export const ThemeContext = createContext<ThemeContextProps>({
-  theme: "light",
-  toggleTheme: () => { },
+    expect(container).toBeInTheDocument();
+    expect(container).toHaveStyle("background-color: #ffffff");
+    expect(container).toHaveStyle("color: #000000");
+
+    // Check headings
+    expect(screen.getByRole("heading", {name: /Urban Housing Demand in Hamilton vs. Toronto/i})).toBeInTheDocument();
+    expect(screen.getByRole("heading", {name: /Key Objectives/i})).toBeInTheDocument();
+    expect(screen.getByRole("heading", {name: /Our Approach/i})).toBeInTheDocument();
+  });
+
+  test("renders the component and applies correct styles for dark theme", () => {
+    render(
+      <ThemeContext.Provider value={{theme: "dark", toggleTheme: jest.fn()}}>
+        <ProductPitch />
+      </ThemeContext.Provider>
+    );
+
+    const container = screen.getByTestId("product-pitch");
+
+    expect(container).toBeInTheDocument();
+    expect(container).toHaveStyle("background-color: #1c1c1c");
+    expect(container).toHaveStyle("color: rgb(244, 244, 244)");
+
+    // Check headings
+    expect(screen.getByRole("heading", {name: /Urban Housing Demand in Hamilton vs. Toronto/i})).toBeInTheDocument();
+    expect(screen.getByRole("heading", {name: /Key Objectives/i})).toBeInTheDocument();
+    expect(screen.getByRole("heading", {name: /Our Approach/i})).toBeInTheDocument();
+  });
 });
-
-/**
- * A custom ThemeProvider that:
- * 1) Uses an internal state for the current theme.
- * 2) Exposes `theme` and `toggleTheme`.
- * 3) Allows you to supply an initial theme via `value`.
- */
-export const ThemeProvider: React.FC<ThemeProviderProps> = ({children, value}) => {
-  // Start with either `value.theme` (if provided) or default to "light"
-  const [theme, setTheme] = useState(value?.theme ?? "light");
-
-  // Whenever `theme` changes, update the data-theme attribute
-  useEffect(() => {
-    document.documentElement.setAttribute("data-theme", theme);
-  }, [theme]);
-
-  // Toggle between light and dark
-  const toggleTheme = () => {
-    setTheme(prev => (prev === "light" ? "dark" : "light"));
-  };
-
-  return (
-    <ThemeContext.Provider value={{theme, toggleTheme}}>
-      {children}
-    </ThemeContext.Provider>
-  );
-};

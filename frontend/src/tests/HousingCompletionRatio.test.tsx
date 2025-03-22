@@ -1,13 +1,20 @@
 import React from "react";
-import {render, screen} from "@testing-library/react";
-import "@testing-library/jest-dom"; // Needed for toHaveStyle, etc.
-import {ThemeContext} from "../ThemeContext"; // Import ThemeContext instead of ThemeProvider
+import {render, screen, waitFor} from "@testing-library/react";
+import "@testing-library/jest-dom";
+import {ThemeContext} from "../ThemeContext";
 import HousingCompletionRatio from "../components/HousingCompletionRatio";
+import {getHousingCompletionRatios} from "../services/housingService";
 
-/**
- * Mock ResizeObserver globally so that Chart.js doesn't crash in Jest + jsdom.
- * You can also place this in a jest.setup.js if you prefer.
- */
+// Mock API response
+jest.mock("../services/housingService", () => ({
+  getHousingCompletionRatios: jest.fn().mockResolvedValue([
+    {city: "Hamilton", year: 2023, month: 1, ratio: 0.85},
+    {city: "Hamilton", year: 2023, month: 2, ratio: 0.88},
+    {city: "Toronto", year: 2023, month: 1, ratio: 0.82},
+    {city: "Toronto", year: 2023, month: 2, ratio: 0.80},
+  ]),
+}));
+
 beforeAll(() => {
   class ResizeObserver {
     observe() { }
@@ -19,35 +26,34 @@ beforeAll(() => {
 });
 
 describe("HousingCompletionRatio Component", () => {
-  it("renders the chart container and updates theme context without crashing", () => {
-    // Render with a mock 'light' theme
+  it("renders the chart container and updates theme context without crashing", async () => {
     const {rerender} = render(
       <ThemeContext.Provider value={{theme: "light", toggleTheme: jest.fn()}}>
         <HousingCompletionRatio />
       </ThemeContext.Provider>
     );
 
-    // Check that the main container is in the DOM
-    const container = screen.getByTestId("housing-completion-ratio");
+    // Ensure the component is in the DOM
+    const container = await screen.findByTestId("housing-completion-ratio");
     expect(container).toBeInTheDocument();
 
-    // Optionally, check if chart data loaded (no "Loading..." text):
-    expect(screen.queryByText(/Loading chart data/i)).not.toBeInTheDocument();
+    // Wait for the loading text to disappear
+    await waitFor(() => expect(screen.queryByText(/Loading chart data/i)).not.toBeInTheDocument());
 
-    // Re-render with a 'dark' theme
+    // Re-render with dark theme
     rerender(
       <ThemeContext.Provider value={{theme: "dark", toggleTheme: jest.fn()}}>
         <HousingCompletionRatio />
       </ThemeContext.Provider>
     );
 
-    // Container should still be present
-    expect(screen.getByTestId("housing-completion-ratio")).toBeInTheDocument();
+    // Ensure it still renders
+    expect(await screen.findByTestId("housing-completion-ratio")).toBeInTheDocument();
 
-    // If you want to test actual style changes, you must mock the CSS variables:
-    document.documentElement.style.setProperty("--background-color", "#1c1c1c");
+    // Mock CSS variable (JSDOM limitation)
+    document.documentElement.style.setProperty("--background-color", "rgb(28, 28, 28)");
 
-    // Then check (keeping in mind jsdom doesn't fully compute var() expressions)
-    expect(container).toHaveStyle("background-color: var(--background-color)");
+    // Check background color
+    expect(container).toHaveStyle("background-color: rgb(28, 28, 28)");
   });
 });

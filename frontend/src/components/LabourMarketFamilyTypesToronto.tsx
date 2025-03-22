@@ -1,4 +1,4 @@
-import React, {useMemo} from "react";
+import React, {useEffect, useState} from "react";
 import {Pie} from "react-chartjs-2";
 import {
   Chart as ChartJS,
@@ -9,88 +9,90 @@ import {
   Tooltip,
   Legend,
 } from "chart.js";
-import {useTheme} from "../ThemeContext"; // ✅ Import useTheme
+import {useTheme} from "../ThemeContext";
+import {getLabourMarketFamilyTypes} from "../services/housingService";
 
 ChartJS.register(CategoryScale, LinearScale, ArcElement, Title, Tooltip, Legend);
 
-// Mock family type data for Toronto
-const familyTypeData: Record<number, string> = {
-  1: "Person not in an economic family",
-  2: "Dual-earner couple, no children or none under 25",
-  3: "Dual-earner couple, youngest child 0 to 17",
-  4: "Dual-earner couple, youngest child 18 to 24",
-  5: "Single-earner couple, male employed, no children or none under 25",
-  6: "Single-earner couple, male employed, youngest child 0 to 17",
-  7: "Single-earner couple, male employed, youngest child 18 to 24",
-  8: "Single-earner couple, female employed, no children or none under 25",
-  9: "Single-earner couple, female employed, youngest child 0 to 17",
-  10: "Single-earner couple, female employed, youngest child 18 to 24",
-  11: "Non-earner couple, no children or none under 25",
-  12: "Non-earner couple, youngest child 0 to 17",
-  13: "Non-earner couple, youngest child 18 to 24",
-  14: "Lone-parent family, parent employed, youngest child 0 to 17",
-  15: "Lone-parent family, parent employed, youngest child 18 to 24",
-  16: "Lone-parent family, parent not employed, youngest child 0 to 17",
-  17: "Lone-parent family, parent not employed, youngest child 18 to 24",
-  18: "Other families",
+const fallbackFamilyTypeCounts = {
+  "Person not in an economic family": 360_193,
+  "Dual-earner couple, no children or none under 25": 279_856,
+  "Dual-earner couple, youngest child 0 to 17": 250_643,
+  "Dual-earner couple, youngest child 18 to 24": 119_984,
+  "Single-earner couple, male employed, no children or none under 25": 79_745,
+  "Single-earner couple, male employed, youngest child 0 to 17": 60_289,
+  "Single-earner couple, male employed, youngest child 18 to 24": 25_618,
+  "Single-earner couple, female employed, no children or none under 25": 55_274,
+  "Single-earner couple, female employed, youngest child 0 to 17": 44_892,
+  "Single-earner couple, female employed, youngest child 18 to 24": 19_835,
+  "Non-earner couple, no children or none under 25": 35_421,
+  "Non-earner couple, youngest child 0 to 17": 14_763,
+  "Non-earner couple, youngest child 18 to 24": 9_928,
+  "Lone-parent family, parent employed, youngest child 0 to 17": 119_542,
+  "Lone-parent family, parent employed, youngest child 18 to 24": 49_271,
+  "Lone-parent family, parent not employed, youngest child 0 to 17": 69_836,
+  "Lone-parent family, parent not employed, youngest child 18 to 24": 30_418,
+  "Other families": 50_729,
 };
-
-// Secure random number generator function
-const getSecureRandomNumber = (max: number) => {
-  const array = new Uint32Array(1);
-  window.crypto.getRandomValues(array);
-  return array[0] % max; // Ensures the number is within the expected range
-};
-
-// Generate a rainbow color scheme
-const generateRainbowColors = (numColors: number) => {
-  const colors = [];
-  for (let i = 0; i < numColors; i++) {
-    const hue = (i * 360) / numColors;
-    colors.push(`hsl(${hue}, 75%, 60%)`);
-  }
-  return colors;
-};
-
-const backgroundColors = generateRainbowColors(Object.keys(familyTypeData).length);
 
 const FamilyTypeToronto: React.FC = () => {
   const {theme} = useTheme();
+  const [chartData, setChartData] = useState<any>(null);
+  const [loading, setLoading] = useState<boolean>(true);
 
-  // Generate random values ONLY when component mounts (avoid top-level calls)
-  const randomValues = useMemo(() => {
-    return Object.keys(familyTypeData).map(() => getSecureRandomNumber(100));
+  useEffect(() => {
+    async function fetchData() {
+      try {
+        const allData = await getLabourMarketFamilyTypes();
+        const torontoData = allData.filter((row) => row.city === "Toronto");
+
+        if (torontoData.length === 0) {
+          setChartData({
+            labels: Object.keys(fallbackFamilyTypeCounts),
+            datasets: [
+              {
+                label: "Family Type Distribution (Toronto)",
+                data: Object.values(fallbackFamilyTypeCounts),
+                backgroundColor: Object.keys(fallbackFamilyTypeCounts).map(
+                  (_, i) => `hsl(${(i * 360) / Object.keys(fallbackFamilyTypeCounts).length}, 75%, 60%)`
+                ),
+              },
+            ],
+          });
+          return;
+        }
+
+        // Count occurrences of family types
+        const countedFamilyTypes: Record<string, number> = {};
+        torontoData.forEach((entry) => {
+          countedFamilyTypes[entry.familyType] = (countedFamilyTypes[entry.familyType] || 0) + 1;
+        });
+
+        setChartData({
+          labels: Object.keys(countedFamilyTypes),
+          datasets: [
+            {
+              label: "Family Type Distribution (Toronto)",
+              data: Object.values(countedFamilyTypes),
+              backgroundColor: Object.keys(countedFamilyTypes).map(
+                (_, i) => `hsl(${(i * 360) / Object.keys(countedFamilyTypes).length}, 75%, 60%)`
+              ),
+            },
+          ],
+        });
+      } catch (error) {
+        console.error("Error fetching Toronto family types:", error);
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    fetchData();
   }, []);
-
-  const data = {
-    labels: Object.values(familyTypeData),
-    datasets: [
-      {
-        label: "Toronto - Family Type Distribution",
-        data: randomValues,
-        backgroundColor: backgroundColors,
-      },
-    ],
-  };
-
-  const options = {
-    responsive: true,
-    maintainAspectRatio: false,
-    plugins: {
-      legend: {
-        labels: {color: theme === "dark" ? "#ffffff" : "#000000"},
-      },
-      title: {
-        display: true,
-        text: "Family Type Breakdown - Toronto",
-        color: theme === "dark" ? "#ffffff" : "#000000",
-      },
-    },
-  };
 
   return (
     <section
-      data-testid="family-types-toronto" // for testing
+      data-testid="family-type-toronto"
       style={{
         maxWidth: "900px",
         margin: "0 auto",
@@ -103,27 +105,12 @@ const FamilyTypeToronto: React.FC = () => {
         textAlign: "center",
       }}
     >
-      <h1
-        style={{
-          textAlign: "center",
-          fontSize: "2.5rem",
-          marginBottom: "20px",
-          color: theme === "dark" ? "#ffffff" : "#000000",
-        }}
-      >
-        Family Type Breakdown - Toronto
+      <h1 style={{textAlign: "center", fontSize: "2.5rem", marginBottom: "20px"}}>
+        Family Type Breakdown (Toronto)
       </h1>
 
-      <div
-        style={{
-          backgroundColor: theme === "dark" ? "#2c2c2c" : "#f8f8f8",
-          padding: "20px",
-          borderRadius: "8px",
-        }}
-      >
-        <div style={{width: "100%", height: "600px", paddingBottom: "50px"}}>
-          <Pie data={data} options={options} />
-        </div>
+      <div style={{backgroundColor: theme === "dark" ? "#2c2c2c" : "#f8f8f8", padding: "20px", borderRadius: "8px"}}>
+        {loading ? <p>Loading chart data...</p> : chartData ? <Pie data={chartData} /> : <p>No data available.</p>}
       </div>
     </section>
   );

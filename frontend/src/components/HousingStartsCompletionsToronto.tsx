@@ -9,60 +9,105 @@ import {
   Tooltip,
   Legend,
 } from "chart.js";
-import {useTheme} from "../ThemeContext";  // ✅ Import useTheme
+import {useTheme} from "../ThemeContext";
+import {getHousingTotalStartsCompletions} from "../services/housingService";
 
 ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend);
 
+interface ChartData {
+  labels: string[];
+  datasets: {
+    label: string;
+    data: number[];
+    backgroundColor: string;
+  }[];
+}
+
+interface HousingEntry {
+  city: string;
+  year: number;
+  month: number;
+  totalStarts: number;
+  totalCompletions: number;
+}
+
 const HousingStartsToronto: React.FC = () => {
-  const {theme} = useTheme(); // ✅ Get theme from context
-
-  interface ChartData {
-    labels: string[];
-    datasets: {
-      label: string;
-      data: number[];
-      backgroundColor: string;
-    }[];
-  }
-
+  const {theme} = useTheme();
   const [chartData, setChartData] = useState<ChartData | null>(null);
-
-  const mockData = [
-    {city: "Toronto", year: 2023, month: 1, totalStarts: 150, totalCompletions: 120},
-    {city: "Toronto", year: 2023, month: 2, totalStarts: 160, totalCompletions: 130},
-    {city: "Toronto", year: 2023, month: 3, totalStarts: 155, totalCompletions: 140},
-    {city: "Toronto", year: 2023, month: 4, totalStarts: 170, totalCompletions: 145},
-    {city: "Toronto", year: 2023, month: 5, totalStarts: 165, totalCompletions: 150},
-    {city: "Toronto", year: 2023, month: 6, totalStarts: 175, totalCompletions: 155},
-  ];
+  const [loading, setLoading] = useState<boolean>(true);
 
   useEffect(() => {
-    const timeLabels = mockData.map(
-      (entry) => `${entry.year}-${String(entry.month).padStart(2, "0")}`
-    );
-    const starts = mockData.map((entry) => entry.totalStarts);
-    const completions = mockData.map((entry) => entry.totalCompletions);
+    async function fetchTorontoData() {
+      try {
+        const allData: HousingEntry[] = await getHousingTotalStartsCompletions();
 
-    setChartData({
-      labels: timeLabels,
-      datasets: [
-        {
-          label: "Toronto - Total Starts",
-          data: starts,
-          backgroundColor: "rgba(0, 200, 0, 0.6)",
-        },
-        {
-          label: "Toronto - Total Completions",
-          data: completions,
-          backgroundColor: "rgba(0, 200, 0, 1)",
-        },
-      ],
-    });
+        // Filter city = "Toronto"
+        const torontoData = allData.filter((entry) => entry.city === "Toronto");
+
+        // Group duplicates by (year, month)
+        const groupedMap = new Map<string, {year: number; month: number; totalStarts: number; totalCompletions: number}>();
+
+        for (const row of torontoData) {
+          const ymKey = `${row.year}-${row.month}`;
+          if (!groupedMap.has(ymKey)) {
+            groupedMap.set(ymKey, {
+              year: row.year,
+              month: row.month,
+              totalStarts: 0,
+              totalCompletions: 0,
+            });
+          }
+          const existing = groupedMap.get(ymKey)!;
+          existing.totalStarts += row.totalStarts;
+          existing.totalCompletions += row.totalCompletions;
+        }
+
+        // Convert map to array and sort by (year, month)
+        const groupedArray = Array.from(groupedMap.values());
+        groupedArray.sort((a, b) => {
+          const dateA = a.year * 100 + a.month;
+          const dateB = b.year * 100 + b.month;
+          return dateA - dateB;
+        });
+
+        // Build labels & data
+        const timeLabels = groupedArray.map(
+          (item) => `${item.year}-${String(item.month).padStart(2, "0")}`
+        );
+        const starts = groupedArray.map((item) => item.totalStarts);
+        const completions = groupedArray.map((item) => item.totalCompletions);
+
+        // Construct chart data
+        const newChartData: ChartData = {
+          labels: timeLabels,
+          datasets: [
+            {
+              label: "Total Starts (Toronto)",
+              data: starts,
+              backgroundColor: "rgba(0, 200, 0, 0.6)",
+            },
+            {
+              label: "Total Completions (Toronto)",
+              data: completions,
+              backgroundColor: "rgba(0, 200, 0, 1)",
+            },
+          ],
+        };
+
+        setChartData(newChartData);
+      } catch (error) {
+        console.error("Error fetching or processing Toronto housing data:", error);
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    fetchTorontoData();
   }, []);
 
   return (
     <section
-      data-testid="housing-starts-toronto" // <-- Added for testing
+      data-testid="housing-starts-toronto"
       style={{
         maxWidth: "900px",
         margin: "0 auto",
@@ -80,10 +125,10 @@ const HousingStartsToronto: React.FC = () => {
           textAlign: "center",
           fontSize: "2.5rem",
           marginBottom: "20px",
-          color: theme === "dark" ? "#ffffff" : "#000000", // ✅ Change title color based on theme
+          color: theme === "dark" ? "#ffffff" : "#000000",
         }}
       >
-        Housing Starts and Completions - Toronto
+        Housing Starts and Completions (Toronto)
       </h1>
 
       <div
@@ -91,9 +136,12 @@ const HousingStartsToronto: React.FC = () => {
           backgroundColor: theme === "dark" ? "#2c2c2c" : "#f8f8f8",
           padding: "20px",
           borderRadius: "8px",
+          height: "600px",
         }}
       >
-        {chartData ? (
+        {loading ? (
+          <p>Loading chart data...</p>
+        ) : chartData ? (
           <Bar
             data={chartData}
             options={{
@@ -107,7 +155,7 @@ const HousingStartsToronto: React.FC = () => {
                 },
                 title: {
                   display: true,
-                  text: "Housing Starts and Completions - Toronto",
+                  text: "Housing Starts and Completions (Toronto)",
                   color: theme === "dark" ? "#ffffff" : "#000000",
                 },
               },
@@ -126,7 +174,7 @@ const HousingStartsToronto: React.FC = () => {
             }}
           />
         ) : (
-          <p>Loading chart data...</p>
+          <p>No data available for Toronto.</p>
         )}
       </div>
     </section>
