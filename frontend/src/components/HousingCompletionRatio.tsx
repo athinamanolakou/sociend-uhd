@@ -10,7 +10,8 @@ import {
   Tooltip,
   Legend,
 } from "chart.js";
-import {useTheme} from "../ThemeContext"; // same pattern as your starts/completions Hamilton file
+import {useTheme} from "../ThemeContext";
+import {getHousingCompletionRatios} from "../services/housingService"; // Import your API function
 
 // Register Chart.js components
 ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend);
@@ -26,28 +27,21 @@ interface ChartData {
   }[];
 }
 
-// Mock data – replace with real data/fetching as needed
-const mockData = [
-  {city: "Hamilton", year: 2023, month: 1, ratio: 0.75},
-  {city: "Hamilton", year: 2023, month: 2, ratio: 0.8},
-  {city: "Hamilton", year: 2023, month: 3, ratio: 0.85},
-  {city: "Hamilton", year: 2023, month: 4, ratio: 0.78},
-  {city: "Hamilton", year: 2023, month: 5, ratio: 0.82},
-  {city: "Hamilton", year: 2023, month: 6, ratio: 0.88},
-  {city: "Toronto", year: 2023, month: 1, ratio: 0.7},
-  {city: "Toronto", year: 2023, month: 2, ratio: 0.72},
-  {city: "Toronto", year: 2023, month: 3, ratio: 0.76},
-  {city: "Toronto", year: 2023, month: 4, ratio: 0.74},
-  {city: "Toronto", year: 2023, month: 5, ratio: 0.78},
-  {city: "Toronto", year: 2023, month: 6, ratio: 0.81},
-];
-
 // Helper to transform raw data into chart-friendly format
-const processChartData = (data: typeof mockData): ChartData => {
+// Notice we now take the same shape returned by getHousingCompletionRatios
+function processChartData(
+  data: {city: string; year: number; month: number; ratio: number}[]
+): ChartData {
+  // Create an array of unique YYYY-MM labels
   const timeLabels = [
-    ...new Set(data.map((entry) => `${entry.year}-${String(entry.month).padStart(2, "0")}`)),
+    ...new Set(
+      data.map(
+        (entry) => `${entry.year}-${String(entry.month).padStart(2, "0")}`
+      )
+    ),
   ];
 
+  // For a given city, produce an array of ratio*100 values in label order
   const getCityCompletionRates = (city: string) =>
     timeLabels.map((date) => {
       const entry = data.find(
@@ -76,16 +70,28 @@ const processChartData = (data: typeof mockData): ChartData => {
       },
     ],
   };
-};
+}
 
 const HousingCompletionRatio: React.FC = () => {
-  const {theme} = useTheme();  // same approach as your Hamilton file
+  const {theme} = useTheme(); // Using your dark/light theme
   const [chartData, setChartData] = useState<ChartData>({labels: [], datasets: []});
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // Simulate fetching / processing data
-    const data = processChartData(mockData);
-    setChartData(data);
+    // Fetch real data instead of mock
+    async function fetchData() {
+      try {
+        const apiData = await getHousingCompletionRatios();
+        const processed = processChartData(apiData);
+        setChartData(processed);
+      } catch (err) {
+        console.error("Error loading housing completion ratios:", err);
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    fetchData();
   }, []);
 
   return (
@@ -121,7 +127,9 @@ const HousingCompletionRatio: React.FC = () => {
           borderRadius: "8px",
         }}
       >
-        {chartData.labels.length > 0 ? (
+        {loading ? (
+          <p>Loading chart data...</p>
+        ) : chartData.labels.length > 0 ? (
           <div style={{width: "100%", height: "500px"}}>
             <Line
               data={chartData}
@@ -156,7 +164,7 @@ const HousingCompletionRatio: React.FC = () => {
             />
           </div>
         ) : (
-          <p>Loading chart data...</p>
+          <p>No data available.</p>
         )}
       </div>
     </section>

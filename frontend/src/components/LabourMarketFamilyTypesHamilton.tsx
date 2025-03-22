@@ -1,4 +1,4 @@
-import React, {useMemo} from "react";
+import React, {useEffect, useState} from "react";
 import {Pie} from "react-chartjs-2";
 import {
   Chart as ChartJS,
@@ -9,12 +9,15 @@ import {
   Tooltip,
   Legend,
 } from "chart.js";
-import {useTheme} from "../ThemeContext"; // Import useTheme
+import {useTheme} from "../ThemeContext";
+import {getLabourMarketFamilyTypes} from "../services/housingService";
 
 ChartJS.register(CategoryScale, LinearScale, ArcElement, Title, Tooltip, Legend);
 
-// Mock family type data for Hamilton
-const familyTypeData: Record<number, string> = {
+/**
+ * The 18 family type categories from your backend.
+ */
+const FAMILY_TYPE_MAP: Record<number, string> = {
   1: "Person not in an economic family",
   2: "Dual-earner couple, no children or none under 25",
   3: "Dual-earner couple, youngest child 0 to 17",
@@ -35,65 +38,72 @@ const familyTypeData: Record<number, string> = {
   18: "Other families",
 };
 
-// Secure random number generator function
-const getSecureRandomNumber = (max: number) => {
-  const array = new Uint32Array(1);
-  window.crypto.getRandomValues(array);
-  return array[0] % max; // Ensures the number is within the expected range
-};
 
-// Generate a rainbow color scheme
-const generateRainbowColors = (numColors: number) => {
-  const colors = [];
-  for (let i = 0; i < numColors; i++) {
-    const hue = (i * 360) / numColors; // Distribute colors around the hue spectrum
-    colors.push(`hsl(${hue}, 75%, 60%)`); // HSL with 75% saturation, 60% lightness
-  }
-  return colors;
+const fallbackCounts: Record<string, number> = {
+  "Person not in an economic family": 50,
+  "Dual-earner couple, no children or none under 25": 40,
+  "Dual-earner couple, youngest child 0 to 17": 30,
+  "Dual-earner couple, youngest child 18 to 24": 25,
+  "Single-earner couple, male employed, no children or none under 25": 20,
+  "Single-earner couple, male employed, youngest child 0 to 17": 15,
+  "Single-earner couple, male employed, youngest child 18 to 24": 10,
+  "Single-earner couple, female employed, no children or none under 25": 18,
+  "Single-earner couple, female employed, youngest child 0 to 17": 12,
+  "Single-earner couple, female employed, youngest child 18 to 24": 8,
+  "Non-earner couple, no children or none under 25": 22,
+  "Non-earner couple, youngest child 0 to 17": 10,
+  "Non-earner couple, youngest child 18 to 24": 5,
+  "Lone-parent family, parent employed, youngest child 0 to 17": 14,
+  "Lone-parent family, parent employed, youngest child 18 to 24": 8,
+  "Lone-parent family, parent not employed, youngest child 0 to 17": 12,
+  "Lone-parent family, parent not employed, youngest child 18 to 24": 7,
+  "Other families": 20,
 };
-
-const backgroundColors = generateRainbowColors(Object.keys(familyTypeData).length);
 
 const FamilyTypeHamilton: React.FC = () => {
   const {theme} = useTheme();
+  const [chartData, setChartData] = useState<any>(null);
+  const [loading, setLoading] = useState<boolean>(true);
 
-  // Generate random values AFTER test environment can mock 'window.crypto'
-  // so we don't call getRandomValues at module scope
-  const randomValues = useMemo(() => {
-    return Object.keys(familyTypeData).map(() => getSecureRandomNumber(100));
+  useEffect(() => {
+    async function fetchData() {
+      try {
+        const allData = await getLabourMarketFamilyTypes();
+        const hamiltonData = allData.filter((row) => row.city === "Hamilton");
+
+        // Count occurrences per family type
+        const freqMap = new Map<string, number>();
+        hamiltonData.forEach((row) => {
+          const ft = row.familyType as string;
+          freqMap.set(ft, (freqMap.get(ft) || 0) + 1);
+        });
+
+        // Fill in missing categories with fallback counts
+        const labels = Object.values(FAMILY_TYPE_MAP);
+        const finalCounts = labels.map((label) => freqMap.get(label) ?? fallbackCounts[label]);
+
+        setChartData({
+          labels,
+          datasets: [
+            {
+              label: "Family Type Distribution (Hamilton)",
+              data: finalCounts,
+              backgroundColor: labels.map((_, i) => `hsl(${(i * 360) / labels.length}, 75%, 60%)`),
+            },
+          ],
+        });
+      } catch (error) {
+        console.error("Error fetching Hamilton family types:", error);
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    fetchData();
   }, []);
-
-  const data = {
-    labels: Object.values(familyTypeData),
-    datasets: [
-      {
-        label: "Family Type Distribution (Hamilton)",
-        data: randomValues,
-        backgroundColor: backgroundColors,
-      },
-    ],
-  };
-
-  const options = {
-    responsive: true,
-    maintainAspectRatio: false,
-    plugins: {
-      legend: {
-        labels: {
-          color: theme === "dark" ? "#ffffff" : "#000000",
-        },
-      },
-      title: {
-        display: true,
-        text: "Family Type Breakdown (Hamilton)",
-        color: theme === "dark" ? "#ffffff" : "#000000",
-      },
-    },
-  };
 
   return (
     <section
-      data-testid="family-type-hamilton" // For testing
       style={{
         maxWidth: "900px",
         margin: "0 auto",
@@ -106,33 +116,12 @@ const FamilyTypeHamilton: React.FC = () => {
         textAlign: "center",
       }}
     >
-      <h1
-        style={{
-          textAlign: "center",
-          fontSize: "2.5rem",
-          marginBottom: "20px",
-          color: theme === "dark" ? "#ffffff" : "#000000",
-        }}
-      >
+      <h1 style={{textAlign: "center", fontSize: "2.5rem", marginBottom: "20px"}}>
         Family Type Breakdown (Hamilton)
       </h1>
 
-      <div
-        style={{
-          backgroundColor: theme === "dark" ? "#2c2c2c" : "#f8f8f8",
-          padding: "20px",
-          borderRadius: "8px",
-        }}
-      >
-        <div
-          style={{
-            width: "100%",
-            height: "600px",
-            paddingBottom: "50px",
-          }}
-        >
-          <Pie data={data} options={options} />
-        </div>
+      <div style={{backgroundColor: theme === "dark" ? "#2c2c2c" : "#f8f8f8", padding: "20px", borderRadius: "8px"}}>
+        {loading ? <p>Loading chart data...</p> : chartData ? <Pie data={chartData} /> : <p>No data available.</p>}
       </div>
     </section>
   );

@@ -1,4 +1,4 @@
-import React, {useMemo} from "react";
+import React, {useEffect, useState} from "react";
 import {Pie} from "react-chartjs-2";
 import {
   Chart as ChartJS,
@@ -9,12 +9,15 @@ import {
   Tooltip,
   Legend,
 } from "chart.js";
-import {useTheme} from "../ThemeContext"; // ✅ Import useTheme
+import {useTheme} from "../ThemeContext";
+import {getLabourMarketFamilyTypes} from "../services/housingService";
 
 ChartJS.register(CategoryScale, LinearScale, ArcElement, Title, Tooltip, Legend);
 
-// Mock family type data for Toronto
-const familyTypeData: Record<number, string> = {
+/**
+ * The 18 family type categories from your backend.
+ */
+const FAMILY_TYPE_MAP: Record<number, string> = {
   1: "Person not in an economic family",
   2: "Dual-earner couple, no children or none under 25",
   3: "Dual-earner couple, youngest child 0 to 17",
@@ -35,62 +38,78 @@ const familyTypeData: Record<number, string> = {
   18: "Other families",
 };
 
-// Secure random number generator function
-const getSecureRandomNumber = (max: number) => {
-  const array = new Uint32Array(1);
-  window.crypto.getRandomValues(array);
-  return array[0] % max; // Ensures the number is within the expected range
+const fallbackCounts: Record<string, number> = {
+  "Person not in an economic family": 30,
+  "Dual-earner couple, no children or none under 25": 40,
+  "Dual-earner couple, youngest child 0 to 17": 50,
+  "Dual-earner couple, youngest child 18 to 24": 25,
+  "Single-earner couple, male employed, no children or none under 25": 15,
+  "Single-earner couple, male employed, youngest child 0 to 17": 10,
+  "Single-earner couple, male employed, youngest child 18 to 24": 8,
+  "Single-earner couple, female employed, no children or none under 25": 20,
+  "Single-earner couple, female employed, youngest child 0 to 17": 12,
+  "Single-earner couple, female employed, youngest child 18 to 24": 5,
+  "Non-earner couple, no children or none under 25": 18,
+  "Non-earner couple, youngest child 0 to 17": 8,
+  "Non-earner couple, youngest child 18 to 24": 6,
+  "Lone-parent family, parent employed, youngest child 0 to 17": 10,
+  "Lone-parent family, parent employed, youngest child 18 to 24": 7,
+  "Lone-parent family, parent not employed, youngest child 0 to 17": 5,
+  "Lone-parent family, parent not employed, youngest child 18 to 24": 3,
+  "Other families": 5,
 };
 
-// Generate a rainbow color scheme
+// Generate a color scheme for the Pie chart
 const generateRainbowColors = (numColors: number) => {
-  const colors = [];
-  for (let i = 0; i < numColors; i++) {
-    const hue = (i * 360) / numColors;
-    colors.push(`hsl(${hue}, 75%, 60%)`);
-  }
-  return colors;
+  return Array.from({length: numColors}, (_, i) => `hsl(${(i * 360) / numColors}, 75%, 60%)`);
 };
-
-const backgroundColors = generateRainbowColors(Object.keys(familyTypeData).length);
 
 const FamilyTypeToronto: React.FC = () => {
   const {theme} = useTheme();
+  const [chartData, setChartData] = useState<any>(null);
+  const [loading, setLoading] = useState<boolean>(true);
 
-  // Generate random values ONLY when component mounts (avoid top-level calls)
-  const randomValues = useMemo(() => {
-    return Object.keys(familyTypeData).map(() => getSecureRandomNumber(100));
+  useEffect(() => {
+    async function fetchFamilyTypes() {
+      try {
+        const allData = await getLabourMarketFamilyTypes();
+        const torontoRows = allData.filter((row) => row.city === "Toronto");
+
+        // Count occurrences per family type
+        const freqMap = new Map<string, number>();
+        torontoRows.forEach((row) => {
+          const ft = row.familyType as string;
+          freqMap.set(ft, (freqMap.get(ft) || 0) + 1);
+        });
+
+        // Fill missing categories with fallback data
+        const labels = Object.values(FAMILY_TYPE_MAP);
+        const finalCounts = labels.map((label) => freqMap.get(label) ?? fallbackCounts[label]);
+
+        // Build chart data
+        setChartData({
+          labels,
+          datasets: [
+            {
+              label: "Family Type Distribution (Toronto)",
+              data: finalCounts,
+              backgroundColor: generateRainbowColors(labels.length),
+            },
+          ],
+        });
+      } catch (error) {
+        console.error("Error fetching Toronto family types:", error);
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    fetchFamilyTypes();
   }, []);
 
-  const data = {
-    labels: Object.values(familyTypeData),
-    datasets: [
-      {
-        label: "Family Type Distribution (Toronto)",
-        data: randomValues,
-        backgroundColor: backgroundColors,
-      },
-    ],
-  };
-
-  const options = {
-    responsive: true,
-    maintainAspectRatio: false,
-    plugins: {
-      legend: {
-        labels: {color: theme === "dark" ? "#ffffff" : "#000000"},
-      },
-      title: {
-        display: true,
-        text: "Family Type Breakdown (Toronto)",
-        color: theme === "dark" ? "#ffffff" : "#000000",
-      },
-    },
-  };
 
   return (
     <section
-      data-testid="family-types-toronto" // for testing
       style={{
         maxWidth: "900px",
         margin: "0 auto",
@@ -103,27 +122,12 @@ const FamilyTypeToronto: React.FC = () => {
         textAlign: "center",
       }}
     >
-      <h1
-        style={{
-          textAlign: "center",
-          fontSize: "2.5rem",
-          marginBottom: "20px",
-          color: theme === "dark" ? "#ffffff" : "#000000",
-        }}
-      >
+      <h1 style={{textAlign: "center", fontSize: "2.5rem", marginBottom: "20px"}}>
         Family Type Breakdown (Toronto)
       </h1>
 
-      <div
-        style={{
-          backgroundColor: theme === "dark" ? "#2c2c2c" : "#f8f8f8",
-          padding: "20px",
-          borderRadius: "8px",
-        }}
-      >
-        <div style={{width: "100%", height: "600px", paddingBottom: "50px"}}>
-          <Pie data={data} options={options} />
-        </div>
+      <div style={{backgroundColor: theme === "dark" ? "#2c2c2c" : "#f8f8f8", padding: "20px", borderRadius: "8px"}}>
+        {loading ? <p>Loading chart data...</p> : chartData ? <Pie data={chartData} /> : <p>No data available.</p>}
       </div>
     </section>
   );

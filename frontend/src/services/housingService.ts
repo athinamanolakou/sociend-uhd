@@ -79,7 +79,7 @@ export const getLabourMarketFamilyTypes = async (): Promise<{city: string; famil
 /**
  * Fetch labour market immigration data from the backend.
  */
-export const getLabourMarketImmigration = async (): Promise<{city: string; immigrationStatus: string; count: number}[]> => {
+export const getLabourMarketImmigration = async (): Promise<{city: string; year: number; month: number; immigrantStatus: string}[]> => {
     console.log('Fetching labour market immigration from:', `${API_URL}/labour-market/immigration-data`);
     try {
         const response = await fetch(`${API_URL}/labour-market/immigration-data`);

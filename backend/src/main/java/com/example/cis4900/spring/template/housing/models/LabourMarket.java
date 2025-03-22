@@ -340,11 +340,11 @@ public class LabourMarket {
         return cma;
     }
 
-    public Integer getSurvYear() {
+    public Integer getYear() {
         return survYear;
     }
 
-    public Integer getSurvMnth() {
+    public Integer getMonth() {
         return survMnth;
     }
 
