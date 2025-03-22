@@ -1,6 +1,7 @@
-import {getHousingCompletionRatios, getHousingTotalStartsCompletions, getLabourMarketOccupations} from './housingService';
+import {
+  getLabourMarketFamilyTypes, getHousingCompletionRatios, getHousingTotalStartsCompletions, getLabourMarketOccupations
+} from './housingService';
 import fetchMock from 'jest-fetch-mock';
-import { getLabourMarketFamilyTypes } from './housingService';
 
 
 
@@ -95,5 +96,5 @@ it("handles fetch failure for labour market family types data", async () => {
   fetchMock.mockReject(new Error('API failure'));
 
   const data = await getLabourMarketFamilyTypes();
-  expect(data).toEqual([]);  
+  expect(data).toEqual([]);
 });
