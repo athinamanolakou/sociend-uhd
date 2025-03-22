@@ -8,7 +8,8 @@ import LabourMarketOccupationsHamilton from './components/LabourMarketOccupation
 import LabourMarketOccupationsToronto from './components/LabourMarketOccupationsToronto';
 import LabourMarketFamilyTypesHamilton from './components/LabourMarketFamilyTypesHamilton';
 import LabourMarketFamilyTypesToronto from './components/LabourMarketFamilyTypesToronto';
-import HousingVsImmigration from "./components/HousingVsImmigration";
+import HousingVsImmigrationHamilton from "./components/HousingVsImmigrationHamilton";
+import HousingVsImmigrationToronto from "./components/HousingVsImmigrationToronto";
 
 import {ThemeProvider} from './ThemeContext';
 
@@ -43,7 +44,8 @@ const App: React.FC = () => {
 
         {page === "immigration" && (
           <>
-            <HousingVsImmigration />
+            <HousingVsImmigrationHamilton />
+            <HousingVsImmigrationToronto />
           </>
         )}
 
