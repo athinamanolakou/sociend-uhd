@@ -7,8 +7,8 @@ WORKDIR /usr/app
 COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Install Cron
-#RUN apt-get update && apt-get -y install cron
+# Install Cron (Uncommented)
+RUN apt-get update && apt-get install -y cron && rm -rf /var/lib/apt/lists/*
 
 # Copy Application
 COPY . /usr/app
@@ -20,8 +20,5 @@ RUN crontab /etc/cron.d/ingester-cron
 RUN touch /var/log/cron.log
 RUN printenv > /etc/environment
 
-# Make the script executable
-#RUN chmod +x /usr/app/ingestor.py
-
 # Start cron and keep the container alive
-CMD ["sh", "-c", "cron && tail -f /var/log/cron.log"]
+CMD ["sh", "-c", "cron -f && tail -f /var/log/cron.log"]
