@@ -9,7 +9,7 @@ interface ThemeContextProps {
 /** Props for our custom ThemeProvider. */
 interface ThemeProviderProps {
   children: React.ReactNode;
-  /** Allows passing an initial `theme` in tests or anywhere else. */
+  /** Allows passing an initial theme in tests or anywhere else. */
   value?: {
     theme: string;
   };
