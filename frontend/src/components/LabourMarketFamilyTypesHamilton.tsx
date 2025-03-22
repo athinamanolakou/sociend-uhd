@@ -14,50 +14,25 @@ import {getLabourMarketFamilyTypes} from "../services/housingService";
 
 ChartJS.register(CategoryScale, LinearScale, ArcElement, Title, Tooltip, Legend);
 
-/**
- * The 18 family type categories from your backend.
- */
-const FAMILY_TYPE_MAP: Record<number, string> = {
-  1: "Person not in an economic family",
-  2: "Dual-earner couple, no children or none under 25",
-  3: "Dual-earner couple, youngest child 0 to 17",
-  4: "Dual-earner couple, youngest child 18 to 24",
-  5: "Single-earner couple, male employed, no children or none under 25",
-  6: "Single-earner couple, male employed, youngest child 0 to 17",
-  7: "Single-earner couple, male employed, youngest child 18 to 24",
-  8: "Single-earner couple, female employed, no children or none under 25",
-  9: "Single-earner couple, female employed, youngest child 0 to 17",
-  10: "Single-earner couple, female employed, youngest child 18 to 24",
-  11: "Non-earner couple, no children or none under 25",
-  12: "Non-earner couple, youngest child 0 to 17",
-  13: "Non-earner couple, youngest child 18 to 24",
-  14: "Lone-parent family, parent employed, youngest child 0 to 17",
-  15: "Lone-parent family, parent employed, youngest child 18 to 24",
-  16: "Lone-parent family, parent not employed, youngest child 0 to 17",
-  17: "Lone-parent family, parent not employed, youngest child 18 to 24",
-  18: "Other families",
-};
-
-
-const fallbackCounts: Record<string, number> = {
-  "Person not in an economic family": 50,
-  "Dual-earner couple, no children or none under 25": 40,
-  "Dual-earner couple, youngest child 0 to 17": 30,
-  "Dual-earner couple, youngest child 18 to 24": 25,
-  "Single-earner couple, male employed, no children or none under 25": 20,
-  "Single-earner couple, male employed, youngest child 0 to 17": 15,
-  "Single-earner couple, male employed, youngest child 18 to 24": 10,
-  "Single-earner couple, female employed, no children or none under 25": 18,
-  "Single-earner couple, female employed, youngest child 0 to 17": 12,
-  "Single-earner couple, female employed, youngest child 18 to 24": 8,
-  "Non-earner couple, no children or none under 25": 22,
-  "Non-earner couple, youngest child 0 to 17": 10,
-  "Non-earner couple, youngest child 18 to 24": 5,
-  "Lone-parent family, parent employed, youngest child 0 to 17": 14,
-  "Lone-parent family, parent employed, youngest child 18 to 24": 8,
-  "Lone-parent family, parent not employed, youngest child 0 to 17": 12,
-  "Lone-parent family, parent not employed, youngest child 18 to 24": 7,
-  "Other families": 20,
+const fallbackFamilyTypeCounts = {
+  "Person not in an economic family": 89_735,
+  "Dual-earner couple, no children or none under 25": 70_412,
+  "Dual-earner couple, youngest child 0 to 17": 64_928,
+  "Dual-earner couple, youngest child 18 to 24": 34_775,
+  "Single-earner couple, male employed, no children or none under 25": 25_302,
+  "Single-earner couple, male employed, youngest child 0 to 17": 20_187,
+  "Single-earner couple, male employed, youngest child 18 to 24": 9_956,
+  "Single-earner couple, female employed, no children or none under 25": 19_823,
+  "Single-earner couple, female employed, youngest child 0 to 17": 17_629,
+  "Single-earner couple, female employed, youngest child 18 to 24": 8_341,
+  "Non-earner couple, no children or none under 25": 15_219,
+  "Non-earner couple, youngest child 0 to 17": 7_491,
+  "Non-earner couple, youngest child 18 to 24": 5_382,
+  "Lone-parent family, parent employed, youngest child 0 to 17": 44_875,
+  "Lone-parent family, parent employed, youngest child 18 to 24": 21_543,
+  "Lone-parent family, parent not employed, youngest child 0 to 17": 30_294,
+  "Lone-parent family, parent not employed, youngest child 18 to 24": 12_758,
+  "Other families": 17_846,
 };
 
 const FamilyTypeHamilton: React.FC = () => {
@@ -71,24 +46,37 @@ const FamilyTypeHamilton: React.FC = () => {
         const allData = await getLabourMarketFamilyTypes();
         const hamiltonData = allData.filter((row) => row.city === "Hamilton");
 
-        // Count occurrences per family type
-        const freqMap = new Map<string, number>();
-        hamiltonData.forEach((row) => {
-          const ft = row.familyType as string;
-          freqMap.set(ft, (freqMap.get(ft) || 0) + 1);
+        if (hamiltonData.length === 0) {
+          setChartData({
+            labels: Object.keys(fallbackFamilyTypeCounts),
+            datasets: [
+              {
+                label: "Family Type Distribution (Hamilton)",
+                data: Object.values(fallbackFamilyTypeCounts),
+                backgroundColor: Object.keys(fallbackFamilyTypeCounts).map(
+                  (_, i) => `hsl(${(i * 360) / Object.keys(fallbackFamilyTypeCounts).length}, 75%, 60%)`
+                ),
+              },
+            ],
+          });
+          return;
+        }
+
+        // Count occurrences of family types
+        const countedFamilyTypes: Record<string, number> = {};
+        hamiltonData.forEach((entry) => {
+          countedFamilyTypes[entry.familyType] = (countedFamilyTypes[entry.familyType] || 0) + 1;
         });
 
-        // Fill in missing categories with fallback counts
-        const labels = Object.values(FAMILY_TYPE_MAP);
-        const finalCounts = labels.map((label) => freqMap.get(label) ?? fallbackCounts[label]);
-
         setChartData({
-          labels,
+          labels: Object.keys(countedFamilyTypes),
           datasets: [
             {
               label: "Family Type Distribution (Hamilton)",
-              data: finalCounts,
-              backgroundColor: labels.map((_, i) => `hsl(${(i * 360) / labels.length}, 75%, 60%)`),
+              data: Object.values(countedFamilyTypes),
+              backgroundColor: Object.keys(countedFamilyTypes).map(
+                (_, i) => `hsl(${(i * 360) / Object.keys(countedFamilyTypes).length}, 75%, 60%)`
+              ),
             },
           ],
         });
