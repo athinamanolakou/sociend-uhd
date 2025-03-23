@@ -9,7 +9,6 @@ import org.springframework.stereotype.Service;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 @Service
 public class HousingServiceImpl implements HousingService {
@@ -159,7 +158,7 @@ public class HousingServiceImpl implements HousingService {
                         result.put("immigrantStatus", getImmigrantType(l.getImmig()));
 
                         return result;
-                }).collect(Collectors.toList());
+                }).toList();
         }
 
         private String getOccupationName(Integer noc43) {

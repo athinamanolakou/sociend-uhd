@@ -12,8 +12,6 @@ import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
-import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
 import java.sql.Timestamp;
 import java.time.Year;
@@ -137,7 +135,6 @@ class HousingServiceImplTest {
         assertNotNull(result);
         assertEquals(2, result.size());
         assertEquals(1, result.get(0).get("city"));
-       // assertEquals(2, result.get(0).get("familyType"));
     }
 
     @Test
