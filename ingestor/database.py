@@ -22,6 +22,24 @@ class Database:
             "labour_market": "https://cis-data-service.socs.uoguelph.ca/data/labour_market",
         }
 
+    def safe_int(self, value):
+        """Convert a value to int after removing commas. Return 0 if the value is empty or invalid."""
+        try:
+            if value is None or str(value).strip() == "":
+                return 0
+            return int(str(value).replace(',', '').strip())
+        except ValueError:
+            return 0
+
+    def safe_float(self, value):
+        """Convert a value to float after removing commas. Return 0.0 if the value is empty or invalid."""
+        try:
+            if value is None or str(value).strip() == "":
+                return 0.0
+            return float(str(value).replace(',', '').strip())
+        except ValueError:
+            return 0.0
+
     def connect(self):
         """Establish and return a database connection."""
         if self.connection is None:
@@ -76,12 +94,19 @@ class Database:
                 continue
 
             cursor.execute(query, (
-                int(entry.get("Year", 0)), int(entry.get("Month", 0)), city,
-                int(entry.get("Singles_starts", 0) or 0), int(entry.get("Semis_starts", 0) or 0),
-                int(entry.get("Row_starts", 0) or 0), int(entry.get("Apt_Other_starts", 0) or 0),
-                int(entry.get("Total_starts", 0) or 0), int(entry.get("Singles_complete", 0) or 0),
-                int(entry.get("Semis_complete", 0) or 0), int(entry.get("Row_complete", 0) or 0),
-                int(entry.get("Apt_other_complete", 0) or 0), int(entry.get("Total_complete", 0) or 0)
+                self.safe_int(entry.get("Year", 0)),
+                self.safe_int(entry.get("Month", 0)),
+                city,
+                self.safe_int(entry.get("Singles_starts", 0)),
+                self.safe_int(entry.get("Semis_starts", 0)),
+                self.safe_int(entry.get("Row_starts", 0)),
+                self.safe_int(entry.get("Apt_Other_starts", 0)),
+                self.safe_int(entry.get("Total_starts", 0)),
+                self.safe_int(entry.get("Singles_complete", 0)),
+                self.safe_int(entry.get("Semis_complete", 0)),
+                self.safe_int(entry.get("Row_complete", 0)),
+                self.safe_int(entry.get("Apt_other_complete", 0)),
+                self.safe_int(entry.get("Total_complete", 0))
             ))
 
         conn.commit()
@@ -128,23 +153,23 @@ class Database:
                 continue
 
             cursor.execute(query, (
-                int(entry.get("Year", 0)),
-                int(entry.get("Month", 0)),
+                self.safe_int(entry.get("Year", 0)),
+                self.safe_int(entry.get("Month", 0)),
                 city,
-                int(entry.get("15 Structure", 0) or 0),
-                int(entry.get("15 Units", 0) or 0),
-                int(entry.get("619 Structure", 0) or 0),
-                int(entry.get("619 Units", 0) or 0),
-                int(entry.get("2049 Structure", 0) or 0),
-                int(entry.get("2049 Units", 0) or 0),
-                int(entry.get("5099 Structure", 0) or 0),
-                int(entry.get("5099 Units", 0) or 0),
-                int(entry.get("100199 Structure", 0) or 0),
-                int(entry.get("100199 Units", 0) or 0),
-                int(entry.get("200+ Structure", 0) or 0),
-                int(entry.get("200+ Units", 0) or 0),
-                int(entry.get("Total Structure", 0) or 0),
-                int(entry.get("Total Units", 0) or 0)
+                self.safe_int(entry.get("15 Structure", 0)),
+                self.safe_int(entry.get("15 Units", 0)),
+                self.safe_int(entry.get("619 Structure", 0)),
+                self.safe_int(entry.get("619 Units", 0)),
+                self.safe_int(entry.get("2049 Structure", 0)),
+                self.safe_int(entry.get("2049 Units", 0)),
+                self.safe_int(entry.get("5099 Structure", 0)),
+                self.safe_int(entry.get("5099 Units", 0)),
+                self.safe_int(entry.get("100199 Structure", 0)),
+                self.safe_int(entry.get("100199 Units", 0)),
+                self.safe_int(entry.get("200+ Structure", 0)),
+                self.safe_int(entry.get("200+ Units", 0)),
+                self.safe_int(entry.get("Total Structure", 0)),
+                self.safe_int(entry.get("Total Units", 0))
             ))
 
         conn.commit()
@@ -178,14 +203,23 @@ class Database:
                 continue
 
             cursor.execute(query, (
-                int(entry.get("Year", 0)), int(entry.get("Month", 0)), city,
-                int(entry.get("15 Structure", 0) or 0), int(entry.get("15 Units", 0) or 0),
-                int(entry.get("619 Structure", 0) or 0), int(entry.get("619 Units", 0) or 0),
-                int(entry.get("2049 Structure", 0) or 0), int(entry.get("2049 Units", 0) or 0),
-                int(entry.get("5099 Structure", 0) or 0), int(entry.get("5099 Units", 0) or 0),
-                int(entry.get("100199 Structure", 0) or 0), int(entry.get("100199 Units", 0) or 0),
-                int(entry.get("200+ Structure", 0) or 0), int(entry.get("200+ Units", 0) or 0),
-                int(entry.get("Total Structure", 0) or 0), int(entry.get("Total Units", 0) or 0)
+                self.safe_int(entry.get("Year", 0)),
+                self.safe_int(entry.get("Month", 0)),
+                city,
+                self.safe_int(entry.get("15 Structure", 0)),
+                self.safe_int(entry.get("15 Units", 0)),
+                self.safe_int(entry.get("619 Structure", 0)),
+                self.safe_int(entry.get("619 Units", 0)),
+                self.safe_int(entry.get("2049 Structure", 0)),
+                self.safe_int(entry.get("2049 Units", 0)),
+                self.safe_int(entry.get("5099 Structure", 0)),
+                self.safe_int(entry.get("5099 Units", 0)),
+                self.safe_int(entry.get("100199 Structure", 0)),
+                self.safe_int(entry.get("100199 Units", 0)),
+                self.safe_int(entry.get("200+ Structure", 0)),
+                self.safe_int(entry.get("200+ Units", 0)),
+                self.safe_int(entry.get("Total Structure", 0)),
+                self.safe_int(entry.get("Total Units", 0))
             ))
 
         conn.commit()
@@ -210,19 +244,20 @@ class Database:
         """
 
         for entry in data:
+            # Notice the slight variation in key names (e.g., " CMA") that might be present in the data
             city = entry.get("CMA", entry.get(" CMA", "")).strip()
             if city not in ["Toronto", "Hamilton"]:
-                continue  # Skip if not in Toronto or Hamilton
+                continue
 
             cursor.execute(query, (
-                int(entry.get("Year", 0)),
-                int(entry.get("Month", 0)),
+                self.safe_int(entry.get("Year", 0)),
+                self.safe_int(entry.get("Month", 0)),
                 city,
-                int(entry.get("Singles", 0) or 0),
-                int(entry.get("Semis", 0) or 0),
-                int(entry.get("Row", 0) or 0),
-                int(entry.get("Apt. and Other", 0) or 0),
-                int(entry.get("Total", 0) or 0)
+                self.safe_int(entry.get("Singles", 0)),
+                self.safe_int(entry.get("Semis", 0)),
+                self.safe_int(entry.get("Row", 0)),
+                self.safe_int(entry.get("Apt. and Other", 0)),
+                self.safe_int(entry.get("Total", 0))
             ))
 
         conn.commit()
@@ -233,7 +268,7 @@ class Database:
         Insert labour market data into the database.
         Assumes that the database table "labour_market" exists with columns matching:
         rec_num, survyear, survmnth, lfsstat, prov, cma, age_12, age_6, sex, marstat, educ,
-        mjh, everwork, ftptlast, cowmain, immig, NAICS_21, NOC_10, NOC_43, HRLYEARN, UNION,
+        mjh, everwork, ftptlast, cowmain, immig, NAICS_21, NOC_10, NOC_43, HRLYEARN, `UNION`,
         PERMTEMP, ESTSIZE, FIRMSIZE, DURUNEMP, FLOWUNEM, SCHOOLN, EFAMTYPE, FINALWT.
         """
         conn = self.connect()
@@ -242,7 +277,7 @@ class Database:
         query = """
             INSERT INTO labour_market (
                 rec_num, survyear, survmnth, lfsstat, prov, cma, age_12, age_6, sex, marstat, educ,
-                mjh, everwork, ftptlast, cowmain, immig, NAICS_21, NOC_10, NOC_43, HRLYEARN, UNION,
+                mjh, everwork, ftptlast, cowmain, immig, NAICS_21, NOC_10, NOC_43, HRLYEARN, `UNION`,
                 PERMTEMP, ESTSIZE, FIRMSIZE, DURUNEMP, FLOWUNEM, SCHOOLN, EFAMTYPE, FINALWT
             ) VALUES (
                 %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s,
@@ -268,7 +303,7 @@ class Database:
                 NOC_10 = VALUES(NOC_10),
                 NOC_43 = VALUES(NOC_43),
                 HRLYEARN = VALUES(HRLYEARN),
-                UNION = VALUES(UNION),
+                `UNION` = VALUES(`UNION`),
                 PERMTEMP = VALUES(PERMTEMP),
                 ESTSIZE = VALUES(ESTSIZE),
                 FIRMSIZE = VALUES(FIRMSIZE),
@@ -282,46 +317,50 @@ class Database:
 
         for entry in data:
             cursor.execute(query, (
-                int(entry.get("rec_num", 0)),
-                int(entry.get("survyear", 0)),
-                int(entry.get("survmnth", 0)),
-                int(entry.get("lfsstat", 0)),
-                int(entry.get("prov", 0)),
-                int(entry.get("cma", 0)),
-                int(entry.get("age_12", 0)),
-                int(entry.get("age_6", 0)),
-                int(entry.get("sex", 0)),
-                int(entry.get("marstat", 0)),
-                int(entry.get("educ", 0)),
-                int(entry.get("mjh", 0)),
-                int(entry.get("everwork", 0)),
-                int(entry.get("ftptlast", 0)),
-                int(entry.get("cowmain", 0)),
-                int(entry.get("immig", 0)),
-                int(entry.get("NAICS_21", 0)),
-                int(entry.get("NOC_10", 0)),
-                int(entry.get("NOC_43", 0)),
-                float(entry.get("HRLYEARN", 0.0)),
-                int(entry.get("UNION", 0)),
-                int(entry.get("PERMTEMP", 0)),
-                int(entry.get("ESTSIZE", 0)),
-                int(entry.get("FIRMSIZE", 0)),
-                int(entry.get("DURUNEMP", 0)),
-                int(entry.get("FLOWUNEM", 0)),
-                int(entry.get("SCHOOLN", 0)),
-                int(entry.get("EFAMTYPE", 0)),
-                float(entry.get("FINALWT", 0.0))
+                self.safe_int(entry.get("rec_num", 0)),
+                self.safe_int(entry.get("survyear", 0)),
+                self.safe_int(entry.get("survmnth", 0)),
+                self.safe_int(entry.get("lfsstat", 0)),
+                self.safe_int(entry.get("prov", 0)),
+                self.safe_int(entry.get("cma", 0)),
+                self.safe_int(entry.get("age_12", 0)),
+                self.safe_int(entry.get("age_6", 0)),
+                self.safe_int(entry.get("sex", 0)),
+                self.safe_int(entry.get("marstat", 0)),
+                self.safe_int(entry.get("educ", 0)),
+                self.safe_int(entry.get("mjh", 0)),
+                self.safe_int(entry.get("everwork", 0)),
+                self.safe_int(entry.get("ftptlast", 0)),
+                self.safe_int(entry.get("cowmain", 0)),
+                self.safe_int(entry.get("immig", 0)),
+                self.safe_int(entry.get("NAICS_21", 0)),
+                self.safe_int(entry.get("NOC_10", 0)),
+                self.safe_int(entry.get("NOC_43", 0)),
+                self.safe_int(entry.get("HRLYEARN", 0.0)),  # if necessary, use safe_float here
+                self.safe_int(entry.get("UNION", 0)),
+                self.safe_int(entry.get("PERMTEMP", 0)),
+                self.safe_int(entry.get("ESTSIZE", 0)),
+                self.safe_int(entry.get("FIRMSIZE", 0)),
+                self.safe_int(entry.get("DURUNEMP", 0)),
+                self.safe_int(entry.get("FLOWUNEM", 0)),
+                self.safe_int(entry.get("SCHOOLN", 0)),
+                self.safe_int(entry.get("EFAMTYPE", 0)),
+                self.safe_float(entry.get("FINALWT", 0.0))
             ))
 
         conn.commit()
         cursor.close()
 
+
     def get_all_data(self, table):
-        """Retrieve all records from any table."""
+        """Retrieve all records from any table while ensuring compatibility."""
         conn = self.connect()
         cursor = conn.cursor()
 
-        query = f"SELECT * FROM {table} WHERE city IN ('Toronto', 'Hamilton');"
+        # Determine which column to use for filtering
+        filter_column = "city" if table != "labour_market" else "CMA"
+
+        query = f"SELECT * FROM {table} WHERE {filter_column} IN ('Toronto', 'Hamilton');"
 
         try:
             cursor.execute(query)
